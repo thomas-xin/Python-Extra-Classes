@@ -607,6 +607,17 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     __copy__ = lambda self: self.copy()
 
+    # Creates an iterable from an iterator, making sure the shape matches.
+    def to_iterable(self, other, force=False):
+        if not issubclass(type(other), collections.abc.Sequence) or issubclass(type(other), collections.abc.Mapping):
+            try:
+                other = list(other)
+            except TypeError:
+                other = [other]
+        if len(other) not in (1, self.size) and not force:
+            raise IndexError(f"Unable to perform operation on objects with size {self.size} and {len(other)}.")
+        return other
+
     @blocking
     def clear(self):
         self.size = 0
