@@ -4,6 +4,10 @@ from itertools import repeat
 from collections import deque
 
 
+class Dummy(BaseException):
+    __slots__ = ()
+    __bool__ = lambda: False
+
 def as_str(s):
     if type(s) in (bytes, bytearray, memoryview):
         return bytes(s).decode("utf-8", "replace")
