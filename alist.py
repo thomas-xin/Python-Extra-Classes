@@ -810,7 +810,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 for x in self.view:
                     y = x
                     if isinstance(y, collections.abc.Sequence):
-                        y = nested_tuple(a)
+                        y = nested_tuple(y)
                     if y not in found:
                         found.add(y)
                         temp.append(x)
