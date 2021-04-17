@@ -803,11 +803,15 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             elif sort is None:
                 temp = tuple(set(self.view))
             else:
-                temp = {}
+                temp = deque()
+                found = set()
                 for x in self.view:
-                    if x not in temp:
-                        temp[x] = None
-                temp = tuple(temp.keys())
+                    y = x
+                    if isinstance(y, collections.abc.MutableSequence):
+                        y = tuple(y)
+                    if y not in temp:
+                        found.add(y)
+                        temp.append(x)
             self.size = len(temp)
             self.offs = (len(self.data) - self.size) // 3
             self.view[:] = temp
