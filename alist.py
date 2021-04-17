@@ -811,7 +811,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                     y = x
                     if isinstance(y, collections.abc.Sequence):
                         y = nested_tuple(a)
-                    if y not in temp:
+                    if y not in found:
                         found.add(y)
                         temp.append(x)
             self.size = len(temp)
