@@ -17,7 +17,7 @@ nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Seque
 
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
     
-    """Custom list-like data structure that incorporates the functionality of numpy arrays but allocates more space on the ends in order to have faster insertion."""
+    """Custom list-like data structure that incorporates the functionality of numpy arrays, but allocates more space on the ends in order to have faster insertion."""
 
     maxoff = (1 << 24) - 1
     minsize = 9
@@ -1184,8 +1184,9 @@ afull = lambda size, n=0: alist(repeat(n, size))
 azero = lambda size: alist(repeat(0, size))
 
 
-# Class-based dictionary, with attributes corresponding to keys.
 class cdict(dict):
+    
+    """Class-based dictionary, with attributes corresponding to keys."""
 
     __slots__ = ()
 
@@ -1230,8 +1231,9 @@ class cdict(dict):
     to_list = lambda self: list(super().values())
 
 
-# A dict with key-value pairs fed from more dict-like objects.
 class fdict(cdict):
+
+    """A dict with key-value pairs fed from more dict-like objects."""
 
     __slots__ = ("_feed",)
 
@@ -1348,10 +1350,10 @@ class fdict(cdict):
         except KeyError:
             return default
         
-        
 
-# Double ended mapping, indexable from both sides.
 class demap(collections.abc.Mapping):
+    
+    """Double ended mapping, indexable from both sides."""
 
     __slots__ = ("a", "b")
 
@@ -1421,6 +1423,8 @@ class demap(collections.abc.Mapping):
             
             
 class UniversalSet(collections.abc.Set):
+    
+    """The Universal Set. Contains everything."""
 
     __slots__ = ()
 
@@ -1430,6 +1434,7 @@ class UniversalSet(collections.abc.Set):
     __bool__ = lambda self: True
     __iter__ = lambda self: repeat(None)
     __len__ = lambda self: inf
+    __call__ = lambda self, *args: self
     __le__ = lambda self, other: type(self) is type(other)
     __lt__ = lambda self, other: False
     __eq__ = lambda self, other: type(self) is type(other)
@@ -1440,7 +1445,7 @@ class UniversalSet(collections.abc.Set):
     __or__ = lambda self, other: self
     __sub__ = lambda self, other: self
     __xor__ = lambda self, other: self
-    index = lambda self, obj: 0
+    index = find = lambda self, obj: 0
     isdisjoint = lambda self, other: False
 
 universal_set = UniversalSet()
@@ -1605,8 +1610,9 @@ __qtrans = "".maketrans(__qmap)
 full_prune = lambda s: unicode_prune(s).translate(__qtrans).casefold()
 
 
-# A full-casefold string lookup mapping object.
 class fcdict(cdict):
+
+    """A full-casefold string lookup mapping object."""
 
     __slots__ = ()
 
@@ -1652,8 +1658,10 @@ class fcdict(cdict):
                 return default
             raise
 
-# Dictionary with multiple assignable values per key.
+
 class mdict(cdict):
+
+    """Dictionary with multiple assignable values per key."""
 
     __slots__ = ()
 
@@ -1701,8 +1709,10 @@ class mdict(cdict):
         for k, v in kwargs:
             self.extend(k, v)
 
-# Dictionary with multiple assignable values per key. Uses sets.
+
 class msdict(cdict):
+
+    """Dictionary with multiple assignable values per key. Uses sets."""
 
     __slots__ = ()
 
