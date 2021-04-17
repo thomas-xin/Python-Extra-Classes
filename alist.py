@@ -11,6 +11,8 @@ nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Seque
 
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
+    """Custom list-like data structure that incorporates the functionality of numpy arrays, but allocates more space on the ends in order to have faster insertion."""
+
     maxoff = (1 << 24) - 1
     minsize = 9
     __slots__ = ("hash", "block", "offs", "size", "data", "frozenset", "queries", "_index")
