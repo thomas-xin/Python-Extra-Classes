@@ -1345,6 +1345,77 @@ class fdict(cdict):
             return self[k]
         except KeyError:
             return default
+        
+        
+
+# Double ended mapping, indexable from both sides.
+class demap(collections.abc.Mapping):
+
+    __slots__ = ("a", "b")
+
+    def __init__(self, *args, **kwargs):
+        self.a = cdict(*args, **kwargs)
+        self.b = cdict(reversed(t) for t in self.a.items())
+
+    def __getitem__(self, k):
+        with suppress(KeyError):
+            return self.a.__getitem__(k)
+        return self.b.__getitem__(k)
+
+    def __delitem__(self, k):
+        try:
+            temp = self.a.pop(k)
+        except KeyError:
+            temp = self.b.pop(k)
+            if temp in self.a:
+                self.__delitem__(temp)
+        else:
+            if temp in self.b:
+                self.__delitem__(temp)
+        return self
+
+    def __setitem__(self, k, v):
+        if k not in self.a:
+            if v not in self.a:
+                self.a.__setitem__(k, v)
+                self.b.__setitem__(v, k)
+            else:
+                self.__delitem__(v)
+                self.__setitem__(k, v)
+        else:
+            self.__delitem__(k)
+            if v in self.a:
+                self.__delitem__(v)
+            self.__setitem__(k, v)
+        return self
+
+    def get(self, k, v=None):
+        with suppress(KeyError):
+            return self.__getitem__(k)
+        return v
+
+    def pop(self, k, v=None):
+        with suppress(KeyError):
+            temp = self.__getitem__(k)
+            self.__delitem__(k)
+            return temp
+        return v
+
+    def popitem(self, k, v=None):
+        with suppress(KeyError):
+            temp = self.__getitem__(k)
+            self.__delitem__(k)
+            return (k, temp)
+        return v
+
+    clear = lambda self: (self.a.clear(), self.b.clear())
+    __bool__ = lambda self: bool(self.a)
+    __iter__ = lambda self: iter(self.a.items())
+    __reversed__ = lambda self: reversed(self.a.items())
+    __len__ = lambda self: self.b.__len__()
+    __str__ = lambda self: self.a.__str__()
+    __repr__ = lambda self: f"{self.__class__.__name__}({self.a.__repr__() if bool(self.b) else ''})"
+    __contains__ = lambda self, k: k in self.a or k in self.b
             
             
 class UniversalSet(collections.abc.Set):
@@ -1666,72 +1737,3 @@ class msdict(cdict):
                 self.extend(k, v)
         for k, v in kwargs:
             self.extend(k, v)
-
-# Double ended mapping, indexable from both sides.
-class demap(collections.abc.Mapping):
-
-    __slots__ = ("a", "b")
-
-    def __init__(self, *args, **kwargs):
-        self.a = cdict(*args, **kwargs)
-        self.b = cdict(reversed(t) for t in self.a.items())
-
-    def __getitem__(self, k):
-        with suppress(KeyError):
-            return self.a.__getitem__(k)
-        return self.b.__getitem__(k)
-
-    def __delitem__(self, k):
-        try:
-            temp = self.a.pop(k)
-        except KeyError:
-            temp = self.b.pop(k)
-            if temp in self.a:
-                self.__delitem__(temp)
-        else:
-            if temp in self.b:
-                self.__delitem__(temp)
-        return self
-
-    def __setitem__(self, k, v):
-        if k not in self.a:
-            if v not in self.a:
-                self.a.__setitem__(k, v)
-                self.b.__setitem__(v, k)
-            else:
-                self.__delitem__(v)
-                self.__setitem__(k, v)
-        else:
-            self.__delitem__(k)
-            if v in self.a:
-                self.__delitem__(v)
-            self.__setitem__(k, v)
-        return self
-
-    def get(self, k, v=None):
-        with suppress(KeyError):
-            return self.__getitem__(k)
-        return v
-
-    def pop(self, k, v=None):
-        with suppress(KeyError):
-            temp = self.__getitem__(k)
-            self.__delitem__(k)
-            return temp
-        return v
-
-    def popitem(self, k, v=None):
-        with suppress(KeyError):
-            temp = self.__getitem__(k)
-            self.__delitem__(k)
-            return (k, temp)
-        return v
-
-    clear = lambda self: (self.a.clear(), self.b.clear())
-    __bool__ = lambda self: bool(self.a)
-    __iter__ = lambda self: iter(self.a.items())
-    __reversed__ = lambda self: reversed(self.a.items())
-    __len__ = lambda self: self.b.__len__()
-    __str__ = lambda self: self.a.__str__()
-    __repr__ = lambda self: f"{self.__class__.__name__}({self.a.__repr__() if bool(self.b) else ''})"
-    __contains__ = lambda self, k: k in self.a or k in self.b
