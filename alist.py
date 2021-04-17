@@ -3,6 +3,21 @@ np = numpy
 from itertools import repeat
 from collections import deque
 
+# Creates a nested tuple from a nested list.
+_nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
+nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
+
+# Creates an iterable from an iterator, making sure the shape matches.
+def to_iterable(other, force=False):
+    if not issubclass(type(other), collections.abc.Sequence) or issubclass(type(other), collections.abc.Mapping):
+        try:
+            other = list(other)
+        except TypeError:
+            other = [other]
+    if len(other) not in (1, self.size) and not force:
+        raise IndexError(f"Unable to perform operation on objects with size {self.size} and {len(other)}.")
+    return other
+
 
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
@@ -191,28 +206,28 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @blocking
     def __iadd__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.add(arr, iterable, out=arr)
         return self
 
     @blocking
     def __isub__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.subtract(arr, iterable, out=arr)
         return self
 
     @blocking
     def __imul__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.multiply(arr, iterable, out=arr)
         return self
 
     @blocking
     def __imatmul__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         temp = np.matmul(arr, iterable)
         self.size = len(temp)
@@ -221,35 +236,35 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @blocking
     def __itruediv__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.true_divide(arr, iterable, out=arr)
         return self
 
     @blocking
     def __ifloordiv__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.floor_divide(arr, iterable, out=arr)
         return self
 
     @blocking
     def __imod__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.mod(arr, iterable, out=arr)
         return self
 
     @blocking
     def __ipow__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.power(arr, iterable, out=arr)
         return self
 
     @blocking
     def __ilshift__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         try:
             np.left_shift(arr, iterable, out=arr)
@@ -259,7 +274,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @blocking
     def __irshift__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         try:
             np.right_shift(arr, iterable, out=arr)
@@ -269,21 +284,21 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @blocking
     def __iand__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.logical_and(arr, iterable, out=arr)
         return self
 
     @blocking
     def __ixor__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.logical_xor(arr, iterable, out=arr)
         return self
 
     @blocking
     def __ior__(self, other):
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = self.view
         np.logical_or(arr, iterable, out=arr)
         return self
@@ -326,7 +341,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __matmul__(self, other):
         temp1 = self.view
-        temp2 = self.to_iterable(other)
+        temp2 = to_iterable(other)
         result = temp1 @ temp2
         return self.__class__(result)
 
@@ -413,7 +428,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rtruediv__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         np.true_divide(iterable, arr, out=arr)
         return temp
@@ -421,7 +436,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rfloordiv__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         np.floor_divide(iterable, arr, out=arr)
         return temp
@@ -429,7 +444,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rmod__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         np.mod(iterable, arr, out=arr)
         return temp
@@ -437,7 +452,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rpow__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         np.power(iterable, arr, out=arr)
         return temp
@@ -445,7 +460,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rlshift__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         try:
             np.left_shift(iterable, arr, out=arr)
@@ -456,7 +471,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __rrshift__(self, other):
         temp = self.__class__(self.data)
-        iterable = self.to_iterable(other)
+        iterable = to_iterable(other)
         arr = temp.view
         try:
             np.right_shift(iterable, arr, out=arr)
@@ -472,18 +487,18 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @waiting
     def __lt__(self, other):
-        it = self.to_iterable(other)
+        it = to_iterable(other)
         return self.view < other
 
     @waiting
     def __le__(self, other):
-        it = self.to_iterable(other)
+        it = to_iterable(other)
         return self.view <= other
 
     @waiting
     def __eq__(self, other):
         try:
-            it = self.to_iterable(other)
+            it = to_iterable(other)
             return self.view == other
         except (TypeError, IndexError):
             return
@@ -491,19 +506,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __ne__(self, other):
         try:
-            it = self.to_iterable(other)
+            it = to_iterable(other)
             return self.view != other
         except (TypeError, IndexError):
             return
 
     @waiting
     def __gt__(self, other):
-        it = self.to_iterable(other)
+        it = to_iterable(other)
         return self.view > other
 
     @waiting
     def __ge__(self, other):
-        it = self.to_iterable(other)
+        it = to_iterable(other)
         return self.view >= other
 
     # Takes ints, floats, slices and iterables for indexing
@@ -601,17 +616,6 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         return item in self.view
 
     __copy__ = lambda self: self.copy()
-
-    # Creates an iterable from an iterator, making sure the shape matches.
-    def to_iterable(self, other, force=False):
-        if not issubclass(type(other), collections.abc.Sequence) or issubclass(type(other), collections.abc.Mapping):
-            try:
-                other = list(other)
-            except TypeError:
-                other = [other]
-        if len(other) not in (1, self.size) and not force:
-            raise IndexError(f"Unable to perform operation on objects with size {self.size} and {len(other)}.")
-        return other
 
     @blocking
     def clear(self):
@@ -799,18 +803,14 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 try:
                     temp = np.unique(self.view)
                 except:
-                    temp = sorted(set(self.view))
+                    temp = sorted(set(map(nested_tuple, self.view)))
             elif sort is None:
                 temp = tuple(set(self.view))
             else:
-                def nested_tuple(a):
-                    return tuple(nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
                 temp = deque()
                 found = set()
                 for x in self.view:
-                    y = x
-                    if isinstance(y, collections.abc.Sequence) and type(y) not in (str, bytes):
-                        y = nested_tuple(y)
+                    y = nested_tuple(x)
                     if y not in found:
                         found.add(y)
                         temp.append(x)
@@ -932,7 +932,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         if self.data is None or not self.size:
             self.__init__(reversed(value))
             return self
-        value = self.to_iterable(reversed(value), force=True)
+        value = to_iterable(reversed(value), force=True)
         if self.offs >= len(value):
             self.data[self.offs - len(value):self.offs] = value
             self.offs -= len(value)
@@ -947,7 +947,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         if self.data is None or not self.size:
             self.__init__(value)
             return self
-        value = self.to_iterable(value, force=True)
+        value = to_iterable(value, force=True)
         if len(self.data) - self.offs - self.size >= len(value):
             self.data[self.offs + self.size:self.offs + self.size + len(value)] = value
             self.size += len(value)
@@ -960,7 +960,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     # Similar to str.join
     @waiting
     def join(self, iterable):
-        iterable = self.to_iterable(iterable)
+        iterable = to_iterable(iterable)
         temp = deque()
         for i, v in enumerate(iterable):
             try:
@@ -1153,7 +1153,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     # Removes items according to an array of indices.
     @blocking
     def delitems(self, iterable):
-        iterable = self.to_iterable(iterable, force=True)
+        iterable = to_iterable(iterable, force=True)
         if len(iterable) < 1:
             return self
         if len(iterable) == 1:
