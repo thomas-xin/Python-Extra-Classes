@@ -87,7 +87,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 self.data = iterable.data
             else:
                 self.data = iterable.data.copy()
-        elif fromarray and isinstance(iterable, np.array):
+        elif fromarray and isinstance(iterable, np.ndarray):
             self.offs = 0
             self.size = len(iterable)
             self.data = iterable
