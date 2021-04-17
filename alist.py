@@ -1,6 +1,7 @@
 import numpy, itertools, collections, concurrent.futures
 np = numpy
 from itertools import repeat
+from collections import deque
 
 
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
