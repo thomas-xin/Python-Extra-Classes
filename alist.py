@@ -799,7 +799,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 try:
                     temp = np.unique(self.view)
                 except:
-                    temp = sort(set(self.view))
+                    temp = sorted(set(self.view))
             elif sort is None:
                 temp = tuple(set(self.view))
             else:
