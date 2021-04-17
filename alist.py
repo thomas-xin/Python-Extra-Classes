@@ -48,7 +48,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         return call
 
     # Init takes arguments and casts to a deque if possible, else generates as a single value. Allocates space equal to 3 times the length of the input iterable.
-    def __init__(self, *args, fromarray=False, **void):
+    def __init__(self, *args, fromarray=True, **void):
         fut = getattr(self, "block", None)
         self.block = concurrent.futures.Future()
         self.hash = None
@@ -87,7 +87,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 self.data = iterable.data
             else:
                 self.data = iterable.data.copy()
-        elif fromarray:
+        elif fromarray and isinstance(iterable, np.array):
             self.offs = 0
             self.size = len(iterable)
             self.data = iterable
@@ -98,8 +98,12 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 except TypeError:
                     iterable = [iterable]
             self.size = len(iterable)
-            size = max(self.minsize, self.size * 3)
-            self.offs = size // 3
+            if fromarray:
+                size = self.size
+                self.offs = 0
+            else:
+                size = max(self.minsize, self.size * 3)
+                self.offs = size // 3
             self.data = np.empty(size, dtype=object)
             self.view[:] = iterable
         if not fut or fut.done():
@@ -928,7 +932,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.offs -= len(value)
             self.size += len(value)
             return self
-        self.__init__(np.concatenate([value, self.view]), fromarray=True)
+        self.__init__(np.concatenate([value, self.view]))
         return self
 
     # Appends iterable at the end of the list, reallocating when necessary.
@@ -942,7 +946,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.data[self.offs + self.size:self.offs + self.size + len(value)] = value
             self.size += len(value)
             return self
-        self.__init__(np.concatenate([self.view, value]), fromarray=True)
+        self.__init__(np.concatenate([self.view, value]))
         return self
 
     extendright = extend
@@ -1137,7 +1141,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     # Reallocates list.
     @blocking
     def reconstitute(self, data=None):
-        self.__init__(data if data is not None else self.view)
+        self.__init__(data if data is not None else self.view, fromarray=False)
         return self
 
     # Removes items according to an array of indices.
