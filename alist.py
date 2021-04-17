@@ -803,8 +803,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             elif sort is None:
                 temp = tuple(set(self.view))
             else:
-                def to_tuple(a):
-                    return tuple(to_tuple(a) if isinstance(a, collections.abc.MutableSequence) else i for i in a)
+                def nested_tuple(a):
+                    return nested_tuple(to_tuple(a) if isinstance(a, collections.abc.MutableSequence) else i for i in a)
                 temp = deque()
                 found = set()
                 for x in self.view:
