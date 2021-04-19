@@ -149,6 +149,18 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                         setattr(self, k, v)
                     self.block = None
                     return
+            elif len(s) == 1:
+                self.data = s
+                self.offs = 0
+                self.size = len(s)
+                self.hash = None
+                self.frozenset = None
+                try:
+                    del self.queries
+                except AttributeError:
+                    pass
+                self.block = None
+                return
             elif len(s) == 3:
                 self.data, self.offs, self.size = s
                 self.hash = None
