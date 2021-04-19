@@ -653,7 +653,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @waiting
     def copy(self):
-        return self.__class__(self.view)
+        return self.__class__(self.view.copy())
 
     @waiting
     def sort(self, *args, **kwargs):
