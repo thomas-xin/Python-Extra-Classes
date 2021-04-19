@@ -125,17 +125,6 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                     pass
 
     def __getstate__(self):
-        if self.size <= 0:
-            self.clear()
-            self.data = None
-            self.offs = 0
-        return self.data, self.offs, self.size
-
-    def __getstate__(self):
-        if self.size <= 0:
-            self.clear()
-            self.data = None
-            self.offs = 0
         return self.data, self.offs, self.size
 
     def __setstate__(self, s):
@@ -149,7 +138,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             elif len(s) == 1:
                 self.data = s[0]
                 self.offs = 0
-                self.size = len(s[0])
+                self.size = len(self.data) if self.data is not None else 0
                 self.hash = None
                 self.frozenset = None
                 try:
