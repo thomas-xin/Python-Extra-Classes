@@ -147,9 +147,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                     self.block = None
                     return
             elif len(s) == 1:
-                self.data = s
+                self.data = s[0]
                 self.offs = 0
-                self.size = len(s)
+                self.size = len(s[0])
                 self.hash = None
                 self.frozenset = None
                 try:
