@@ -131,6 +131,13 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.offs = 0
         return self.data, self.offs, self.size
 
+    def __getstate__(self):
+        if self.size <= 0:
+            self.clear()
+            self.data = None
+            self.offs = 0
+        return self.data, self.offs, self.size
+
     def __setstate__(self, s):
         if type(s) is tuple:
             if len(s) == 2:
@@ -139,6 +146,18 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                         setattr(self, k, v)
                     self.block = None
                     return
+            elif len(s) == 1:
+                self.data = s
+                self.offs = 0
+                self.size = len(s)
+                self.hash = None
+                self.frozenset = None
+                try:
+                    del self.queries
+                except AttributeError:
+                    pass
+                self.block = None
+                return
             elif len(s) == 3:
                 self.data, self.offs, self.size = s
                 self.hash = None
