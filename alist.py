@@ -580,7 +580,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def __delitem__(self, key):
         if type(key) is slice:
             s = key.indices(self.size)
-            return self.pops(xrange(*s))
+            return self.pops(range(*s))
         try:
             len(key)
         except TypeError:
@@ -1172,7 +1172,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         if len(iterable) == 1:
             temp = self.pop(iterable[0], force=True)
             if keep:
-                return temp
+                return self.__class__((temp,))
             return self
         indices = np.asarray(iterable, dtype=np.int32)
         if keep:
