@@ -19,8 +19,19 @@ _nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.ab
 nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
 
 
+import numpy, itertools, collections, concurrent.futures
+np = numpy
+from itertools import repeat
+from collections import deque
+
+
+# Creates a nested tuple from a nested list.
+_nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
+nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
+
+
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
-    
+
     """Custom list-like data structure that incorporates the functionality of numpy arrays, but allocates more space on the ends in order to have faster insertion."""
 
     maxoff = (1 << 24) - 1
@@ -590,7 +601,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def __delitem__(self, key):
         if type(key) is slice:
             s = key.indices(self.size)
-            return self.pops(xrange(*s))
+            return self.pops(range(*s))
         try:
             len(key)
         except TypeError:
@@ -1182,7 +1193,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         if len(iterable) == 1:
             temp = self.pop(iterable[0], force=True)
             if keep:
-                return temp
+                return self.__class__((temp,))
             return self
         indices = np.asarray(iterable, dtype=np.int32)
         if keep:
