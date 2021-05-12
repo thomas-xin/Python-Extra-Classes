@@ -768,11 +768,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     # Insertion sort using a binary search to find target position. O(n) time complexity.
     @blocking
-    def insort(self, value, key=None, sorted=True):
+    def insort(self, value, key=None, sort=True):
         if self.data is None:
             self.__init__((value,))
             return self
-        if not sorted:
+        if not sort:
             self.__init__(sorted(self, key=key))
         if key is None:
             return self.insert(np.searchsorted(self.view, value), value, force=True)
@@ -798,8 +798,13 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     # Removes all instances of a certain value from the list.
     @blocking
-    def remove(self, value, key=None, sorted=False):
-        pops = self.search(value, key, sorted, force=True)
+    def remove(self, value, count=None, key=None, sort=False, last=False):
+        pops = self.search(value, key, sort, force=True)
+        if count:
+            if last:
+                pops = pops[-count:]
+            else:
+                pops = pops[:count]
         if pops:
             self.pops(pops, force=True)
         return self
@@ -834,19 +839,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     # Returns first matching value in list.
     @waiting
-    def index(self, value, key=None, sorted=False):
-        return self.search(value, key, sorted, force=True)[0]
+    def index(self, value, key=None, sort=False):
+        return self.search(value, key, sort, force=True)[0]
 
     # Returns last matching value in list.
     @waiting
-    def rindex(self, value, key=None, sorted=False):
-        return self.search(value, key, sorted, force=True)[-1]
+    def rindex(self, value, key=None, sort=False):
+        return self.search(value, key, sort, force=True)[-1]
 
     # Returns indices representing positions for all instances of the target found in list, using binary search when applicable.
     @waiting
-    def search(self, value, key=None, sorted=False):
+    def search(self, value, key=None, sort=False):
         if key is None:
-            if sorted and self.size > self.minsize:
+            if sort and self.size > self.minsize:
                 i = np.searchsorted(self.view, value)
                 if self.view[i] != value:
                     raise IndexError(f"{value} not found.")
@@ -865,7 +870,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 return pops
             else:
                 return self.__class__(np.arange(self.size, dtype=np.uint32)[self.view == value])
-        if sorted:
+        if sort:
             v = value
             d = self.data
             pops = self.__class__()
