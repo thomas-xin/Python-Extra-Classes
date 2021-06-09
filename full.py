@@ -1713,7 +1713,7 @@ class mdict(cdict):
         return values.extend(v).uniq(sort=False)
 
     def append(self, k, v):
-        values = set_dict(super(), k, alist())
+        values = super().setdefault(k, alist())
         if v not in values:
             values.append(v)
 
@@ -1764,7 +1764,7 @@ class msdict(cdict):
         return values.update(v)
 
     def append(self, k, v):
-        values = set_dict(super(), k, set())
+        values = super().setdefault(k, set())
         if v not in values:
             values.add(v)
 
