@@ -575,7 +575,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 a = math.floor(key)
                 b = key - a
                 self.view[a] = self.view[a] * b + args[1] * (1 - b)
-                self.view[b] = self.view[math.ceil(key)] * (1 - b) + args[1] * b
+                c = math.ceil(key)
+                self.view[c] = self.view[c] * (1 - b) + args[1] * b
             if type(key) is int:
                 try:
                     key = key % self.size
