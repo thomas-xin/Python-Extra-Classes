@@ -1134,6 +1134,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             other = frozenset(other)
         data.symmetric_difference_update(other)
         self.__init__(data)
+        self.frozenset = data
         return self
 
     # Clips all values in list to input boundaries.
