@@ -15,7 +15,7 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.next()`<br>`5`<br>`>>> A.next()`<br>`4`<br>`>>> A.next()`<br>`3`<br>`>>> A.next()`<br>`5`
 - `.clear()` => `alist` O(1): Empties the list, removing all of its contents, then returning itself.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.clear()`<br>`[]`
-- `.copy(deep=False)` => `alist` O(n): Creates a copy of the list (with the `deep` argument indicating to copy recursively), returning itself.
+- `.copy(deep=False)` => `alist` O(n): Creates a copy of the list (with the `deep` argument indicating to copy recursively), returning it.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> B = A.copy()`<br>`>>> B`<br>`[5, 4, 3]`
 - `.sort(*args, **kwargs)` => `alist` O(n*log(n)): Sorts the list according to the python builtin [`sorted`](https://docs.python.org/3/library/functions.html#sorted) function, returning itself.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.sort()`<br>`[3, 4, 5]`
