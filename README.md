@@ -39,7 +39,7 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.pop(1)`<br>`4`<br>`>>> A`<br>`[5, 3]`
 - `.insert(index, value)` => `alist` O(n): Inserts the specified value before the designated index, similarly to [`list.insert`](https://docs.python.org/3/tutorial/datastructures.html#list.insert), shifting the smaller half of the list to create the space, and reallocating the list to 3x its original size if no buffer space is available at the closest end. Returns the resulting list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insert(1, 100)`<br>`[5, 100, 4, 3]`
-- `.insort(value, key=None, sort=True)` => `alist` O(n*log(n)): Similar to `.insert`, but performs insertion sort to choose the appropriate position to insert the value. `key` is used in the same way as it is in [`sorted`](https://docs.python.org/3/library/functions.html#sorted), and the `sort` parameter determines whether the entire list is to be sorted prior to insertion; set to `False` for already sorted lists to reduce computation time to O(n). Returns the resulting list.
+- `.insort(value, key=None, sort=True)` => `alist` O(n): Similar to `.insert`, but performs insertion sort to choose the appropriate position to insert the value. `key` is used in the same way as it is in [`sorted`](https://docs.python.org/3/library/functions.html#sorted), and the `sort` parameter indicates whether the entire list is already sorted prior to insertion; set to `False` to sort the list before insertion; this increases the time complexity to O(n*log(n)). Returns the resulting list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4.5)`<br>`[3, 4, 4.5, 5]`
 - `.remove(value, count=None, key=None, sort=False, last=False)` `.discard` => `alist` O(n): Removes up to `count` instances of the target from the list, `key` being an optional identifier function called on the list's values to match to `value`, `sort` indicating whether or not the list is already sorted (set to `True` for already sorted lists to reduce computation time slightly), and `last` indicating whether to remove starting from the end of the list instead of the beginning, only relevant if `count` is set. Returns the resulting list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.remove(5)`<br>`[4, 3]`
@@ -48,7 +48,7 @@
 - `.index(value, key=None, sort=False)` => `int` O(n): Searches for the index of the first entry in the list that matches the specified value similarly to [`list.index`](https://docs.python.org/3/tutorial/datastructures.html#list.index), with an optional function `key` to be used on the entries in the list. Pass `sort=True` to use binary search to improve computational efficiency to O(log(n)) for lists that are already sorted.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.index(4)`<br>`1`
 - `.rindex(value, key=None, sort=False)` => `int` O(n): The [`str.rindex`](https://docs.python.org/3/library/stdtypes.html#str.rindex) counterpart of `.index`, returns the first index from the right side rather than the left.
-  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4)`<br>`[3, 4, 4, 5]`<br>`>>> A.rindex(4, sort=True)`<br>`2`
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4, sort=False)`<br>`[3, 4, 4, 5]`<br>`>>> A.rindex(4, sort=True)`<br>`2`
 - `.search(value, key=None, sort=False)` `find` `findall` => `alist` O(n): Similar to `.index` and `.rindex`, but returns a list of indices of all the matching elements in the list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insert(3, 5)`<br>`[5, 4, 3, 5]`<br>`>>> A.appendleft("5")`<br>`['5', 5, 4, 3, 5]`<br>`>>> A.search(5, key=lambda x: int(x))`<br>`[0, 1, 4]`
 - `.count(value, key=None)` `find` `findall` => `int` O(n): Counts the amount of instances of `value` in the list, with optional identifier function `key`.
@@ -64,7 +64,7 @@
 - `.extendleft(value)` => `alist` O(n+k): Extends the list to the left using elements from iterable `value`, similarly to [`collections.deque.extendleft`](https://docs.python.org/3/library/collections.html#collections.deque.extendleft).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extendleft(range(6, 10))`<br>`[9, 8, 7, 6, 5, 4, 3]`
 - `.extend(value)` `extendright` => `alist` O(n+k): Extends the list to the right using elements from iterable `value`.
-  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extend("2", b"1")`<br>`[5, 4, 3, '2', b'1']`
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extend(("2", b"1"))`<br>`[5, 4, 3, '2', b'1']`
 - `.join(value)` => `alist` O(nk): Concatenates a copy of the list to every item in the specified iterable `value`, similar to [`str.join`](https://docs.python.org/3/library/stdtypes.html#str.join).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.join({"a", "b", "c"})`<br>`['a', 5, 4, 3, 'b', 5, 4, 3, 'c']`
 - `.replace(original, new)` => `alist` O(n): Replaces elements in the list matching `original` with `new`, similar to [`str.replace`](https://docs.python.org/3/library/stdtypes.html#str.replace).
@@ -95,9 +95,14 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.update([1, 2, 3], {5, 6, 7})`<br>`[1, 2, 3, 4, 5, 6, 7]`
 - `.intersection_update` `difference_update` `symmetric_difference_update` Implementations of the corresponding set operations; all of these modify the original list.
 - `.clip(a, b=None)` => `alist` O(n): Performs [`numpy.clip`](https://numpy.org/doc/stable/reference/generated/numpy.clip.html) on the list in-place, with the range defaulting to `[-a, a]` if `b` is not supplied.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.clip(1, 4)`<br>`[4, 4, 3]`
 - `.real()` => `alist` O(n): Returns a copy of the list with all values cast to real numbers, as in [`numpy.real`](https://numpy.org/doc/stable/reference/generated/numpy.real.html).
 - `.imag` `.float` `.complex` `.mpf` Implementations of the other casting functions on the array.
-- `.sum()` => `int` O(n): Returns the sum of the items in the list.
+- `.sum()` => `float` O(n): Returns the sum of the items in the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.sum()`<br>`12`
 - `.mean()` => `float` O(n): Returns the mean of the items in the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.mean()`<br>`4`
 - `.product()` `prod` => `float` O(n): Returns the product of the items in the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.product()`<br>`60`
 - `.delitems(iterable, keep=False)` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html), removing all the items in the list according to the indices supplied in `iterable`, and replaces the contents of the list with the result if `keep` is `False`.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.pops([0, 2])`<br>`[4]`
