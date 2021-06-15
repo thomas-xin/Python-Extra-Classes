@@ -100,4 +100,4 @@
 - `.sum()` => `int` O(n): Returns the sum of the items in the list.
 - `.mean()` => `float` O(n): Returns the mean of the items in the list.
 - `.product()` `prod` => `float` O(n): Returns the product of the items in the list.
-- `.delitems()` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html) and replaces the contents of the list with the result.
+- `.delitems(iterable, keep=False)` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html), removing all the items in the list according to the indices supplied in `iterable`, and replaces the contents of the list with the result if `keep` is `False`.
