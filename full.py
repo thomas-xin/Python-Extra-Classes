@@ -1020,8 +1020,10 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     # Fills list with value(s).
     @blocking
     def fill(self, value):
-        self.offs = (len(self.data) - self.size) // 3
-        self.view[:] = value
+        try:
+            self.view[:] = value
+        except:
+            self.__init__(value)
         return self
 
     # For compatibility with dict() attributes.
