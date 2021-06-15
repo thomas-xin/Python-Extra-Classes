@@ -1175,11 +1175,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @waiting
     def mean(self):
-        return np.mean(self.view)
+        x = np.mean(self.view)
+        y = int(x)
+        if x == y:
+            return y
+        return x
 
     @waiting
     def product(self):
-        return np.prod(self.view)
+        x = np.prod(self.view)
+        y = int(x)
+        if x == y:
+            return y
+        return x
 
     prod = product
 
