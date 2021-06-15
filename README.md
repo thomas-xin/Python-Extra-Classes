@@ -51,7 +51,7 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4, sort=False)`<br>`[3, 4, 4, 5]`<br>`>>> A.rindex(4, sort=True)`<br>`2`
 - `.search(value, key=None, sort=False)` `find` `findall` => `alist` O(n): Similar to `.index` and `.rindex`, but returns a list of indices of all the matching elements in the list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insert(3, 5)`<br>`[5, 4, 3, 5]`<br>`>>> A.appendleft("5")`<br>`['5', 5, 4, 3, 5]`<br>`>>> A.search(5, key=lambda x: int(x))`<br>`[0, 1, 4]`
-- `.count(value, key=None)` `find` `findall` => `int` O(n): Counts the amount of instances of `value` in the list, with optional identifier function `key`.
+- `.count(value, key=None)` => `int` O(n): Counts the amount of instances of `value` in the list, with optional identifier function `key`.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.count(1, key=lambda x: x >= 4)`<br>`2`
 - `.concat(value)` => `alist` O(n+k): Returns a copy of the list with the target list concatenated to the end. Does not modify either lists.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.concat([2, 1])`<br>`[5, 4, 3, 2, 1]`
