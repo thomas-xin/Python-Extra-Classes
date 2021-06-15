@@ -7,6 +7,7 @@
 - Treats numerical operations such as `+`, `-`, `*`, `/`, `**`, `&`, `%` etc as numpy operations, with appropriately in-place modifications when applicable
 - Is a proper subclass of `collections.abc.MutableSequence`, meaning `len`, `bool`, `iter` and the like are all supported.
 - Directly supports floating point indexing, in which case will linearly interpolate between adjacent elements when possible.
+- Automatically allocates empty buffers on either side of the list, in order to greatly improve efficiency of appending/removing from it.
 - Automatically creates a frozenset copy of itself when applicable to improve efficiency of `x in y` and related operations
 
 ### Methods
@@ -48,3 +49,55 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.index(4)`<br>`1`
 - `.rindex(value, key=None, sort=False)` => `int` O(n): The [`str.rindex`](https://docs.python.org/3/library/stdtypes.html#str.rindex) counterpart of `.index`, returns the first index from the right side rather than the left.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4)`<br>`[3, 4, 4, 5]`<br>`>>> A.rindex(4, sort=True)`<br>`2`
+- `.search(value, key=None, sort=False)` `find` `findall` => `alist` O(n): Similar to `.index` and `.rindex`, but returns a list of indices of all the matching elements in the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insert(3, 5)`<br>`[5, 4, 3, 5]`<br>`>>> A.appendleft("5")`<br>`['5', 5, 4, 3, 5]`<br>`>>> A.search(5, key=lambda x: int(x))`<br>`[0, 1, 4]`
+- `.count(value, key=None)` `find` `findall` => `int` O(n): Counts the amount of instances of `value` in the list, with optional identifier function `key`.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.count(1, key=lambda x: x >= 4)`<br>`2`
+- `.concat(value)` => `alist` O(n+k): Returns a copy of the list with the target list concatenated to the end. Does not modify either lists.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.concat([2, 1])`<br>`[5, 4, 3, 2, 1]`
+- `.appendleft(value)` => `alist` O(sqrt(n)): Appends the specified value into the front of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.appendleft(6)`<br>`[6, 5, 4, 3]`
+- `.append(value)` `appendright` => `alist` O(sqrt(n)): Appends the specified value to the end of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.append({2})`<br>`[5, 4, 3, {2}]`
+- `.add(value)` => `alist` O(sqrt(n)): Adds the specified value to the list, in a random direction, similar to [`set.add`](https://docs.python.org/3/library/stdtypes.html#frozenset.add). Can potentially save on buffer re-allocations compared to `appendleft` and `append`.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.add({(9, 8): [7, 6]})`<br>`[{(9, 8): [7, 6]}, 5, 4, 3]`
+- `.extendleft(value)` => `alist` O(n+k): Extends the list to the left using elements from iterable `value`, similarly to [`collections.deque.extendleft`](https://docs.python.org/3/library/collections.html#collections.deque.extendleft).
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extendleft(range(6, 10))`<br>`[9, 8, 7, 6, 5, 4, 3]`
+- `.extend(value)` `extendright` => `alist` O(n+k): Extends the list to the right using elements from iterable `value`.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extend("2", b"1")`<br>`[5, 4, 3, '2', b'1']`
+- `.join(value)` => `alist` O(nk): Concatenates a copy of the list to every item in the specified iterable `value`, similar to [`str.join`](https://docs.python.org/3/library/stdtypes.html#str.join).
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.join({"a", "b", "c"})`<br>`['a', 5, 4, 3, 'b', 5, 4, 3, 'c']`
+- `.replace(original, new)` => `alist` O(n): Replaces elements in the list matching `original` with `new`, similar to [`str.replace`](https://docs.python.org/3/library/stdtypes.html#str.replace).
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.replace(3, "3")`<br>`[5, 4, '3']`
+- `.fill(value)` => `alist` O(n): Fills the list with the specified value or iterable.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.fill(-1)`<br>`[-1, -1, -1]`<br>`>>> A.fill([1, 2, 3, 4])`<br>`[1, 2, 3, 4]`
+- `.keys()` => `range` O(1): Returns a range object representing the list's indices, similar to [`dict.keys`](https://docs.python.org/3/library/stdtypes.html#dict.keys)
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.keys()`<br>`range(0, 3)`
+- `.values()` => `iter` O(1): Returns an iterator, similar to [`dict.values`](https://docs.python.org/3/library/stdtypes.html#dict.values). Functionally identical to calling [`iter`](https://docs.python.org/3/library/functions.html#iter) on the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.values()`<br>`<iterator object at 0x0000000000000000>`
+- `.items()` => `enumerate` O(1): Returns an iterator, similar to [`dict.items`](https://docs.python.org/3/library/stdtypes.html#dict.values). Functionally identical to calling [`enumerate`](https://docs.python.org/3/library/functions.html#iter) on the list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.items()`<br>`<enumerate object at 0x0000000000000000>`
+- `.isdisjoint(other)` => `bool` O(n): Performs [`set.isdisjoint`](https://docs.python.org/3/library/stdtypes.html#frozenset.isdisjoint) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.isdisjoint({6, 7, 8})`<br>`True`
+- `.issubset(other)` => `bool` O(n): Performs [`set.issubset`](https://docs.python.org/3/library/stdtypes.html#frozenset.issubset) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.issubset((1, 4, 3, 8, 5))`<br>`True`
+- `.issuperset(other)` => `bool` O(n): Performs [`set.issuperset`](https://docs.python.org/3/library/stdtypes.html#frozenset.issuperset) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.issuperset([3, 5])`<br>`True`
+- `.union(*others)` => `frozenset` O(n+k): Performs [`frozenset.union`](https://docs.python.org/3/library/stdtypes.html#frozenset.union) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.union({1, 2, 3}, [7, 8, 9], (6, 10))`<br>`frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, 10})`
+- `.intersection(*others)` => `frozenset` O(n+k): Performs [`frozenset.intersection`](https://docs.python.org/3/library/stdtypes.html#frozenset.intersection) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.intersection([3, 4, 7, 8], {5: None, 4: True, 3: False, "a": "b"})`<br>`frozenset({3, 4})`
+- `.difference(*others)` => `frozenset` O(n+k): Performs [`frozenset.difference`](https://docs.python.org/3/library/stdtypes.html#frozenset.difference) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.difference((1, 2, 3), (5, 6, 7))`<br>`frozenset({4})`
+- `.symmetric_difference(other)` => `frozenset` O(n+k): Performs [`frozenset.symmetric_difference`](https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.symmetric_difference([1, 2, 3, 4, 5, 6, 7])`<br>`frozenset({1, 2, 6, 7})`
+- `.update(*others, uniq=True)` => `update` O(n+k): Performs [`frozenset.update`](https://docs.python.org/3/library/stdtypes.html#frozenset.update) on the list. Note: This operation will mutate (modify) the contents of the original list.
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.update([1, 2, 3], {5, 6, 7})`<br>`[1, 2, 3, 4, 5, 6, 7]`
+- `.intersection_update` `difference_update` `symmetric_difference_update` Implementations of the corresponding set operations; all of these modify the original list.
+- `.clip(a, b=None)` => `alist` O(n): Performs [`numpy.clip`](https://numpy.org/doc/stable/reference/generated/numpy.clip.html) on the list in-place, with the range defaulting to `[-a, a]` if `b` is not supplied.
+- `.real()` => `alist` O(n): Returns a copy of the list with all values cast to real numbers, as in [`numpy.real`](https://numpy.org/doc/stable/reference/generated/numpy.real.html).
+- `.imag` `.float` `.complex` `.mpf` Implementations of the other casting functions on the array.
+- `.sum()` => `int` O(n): Returns the sum of the items in the list.
+- `.mean()` => `float` O(n): Returns the mean of the items in the list.
+- `.product()` `prod` => `float` O(n): Returns the product of the items in the list.
+- `.delitems()` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html) and replaces the contents of the list with the result.
