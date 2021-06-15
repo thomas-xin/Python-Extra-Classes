@@ -1086,7 +1086,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @blocking
     def update(self, *others, uniq=True):
         for other in others:
-            if issubclass(other, collections.abc.Mapping):
+            if isinstance(other, collections.abc.Mapping):
                 other = other.values()
             self.extend(other, force=True)
         if uniq:
@@ -1097,7 +1097,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def intersection_update(self, *others, uniq=True):
         pops = set()
         for other in others:
-            if issubclass(other, collections.abc.Mapping):
+            if isinstance(other, collections.abc.Mapping):
                 other = other.values()
             if type(other) not in (set, frozenset):
                 other = frozenset(other)
@@ -1113,7 +1113,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def difference_update(self, *others, uniq=True):
         pops = set()
         for other in others:
-            if issubclass(other, collections.abc.Mapping):
+            if isinstance(other, collections.abc.Mapping):
                 other = other.values()
             if type(other) not in (set, frozenset):
                 other = frozenset(other)
@@ -1128,7 +1128,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @blocking
     def symmetric_difference_update(self, other):
         data = set(self)
-        if issubclass(other, collections.abc.Mapping):
+        if isinstance(other, collections.abc.Mapping):
             other = other.values()
         if type(other) not in (set, frozenset):
             other = frozenset(other)
