@@ -1,4 +1,4 @@
-import numpy, itertools, collections, concurrent.futures
+import numpy, itertools, collections, copy, concurrent.futures
 np = numpy
 from itertools import repeat
 from collections import deque
@@ -638,7 +638,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         return self
 
     @waiting
-    def copy(self):
+    def copy(self, deep=False):
+        if deep:
+            return self.__class__(copy.deepcopy(self.view))
         return self.__class__(self.view.copy())
 
     @waiting
