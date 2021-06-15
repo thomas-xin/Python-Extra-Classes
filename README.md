@@ -35,7 +35,7 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.popleft()`<br>`5`<br>`>>> A`<br>`[4, 3]`
 - `.popright()` => `object` O(1): Pops the rightmost (index -1) entry in the list and returns it.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.popright()`<br>`3`<br>`>>> A`<br>`[5, 4]`
-- `.pop(index=None)` => `object` O(n): Pops an entry at the specified index, returning it, and also shifts the smaller half of the list to close the gap. Most computationally expensive to pop the middle element.
+- `.pop(index=None)` => `object` O(n): Pops an entry at the specified index, returning it, and also shifts the smaller half of the list to close the gap. Falls back to `.popleft`/`popright` when removing from either end of the list; most computationally expensive to pop the middle element.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.pop(1)`<br>`4`<br>`>>> A`<br>`[5, 3]`
 - `.insert(index, value)` => `alist` O(n): Inserts the specified value before the designated index, similarly to [`list.insert`](https://docs.python.org/3/tutorial/datastructures.html#list.insert), shifting the smaller half of the list to create the space, and reallocating the list to 3x its original size if no buffer space is available at the closest end. Returns the resulting list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insert(1, 100)`<br>`[5, 100, 4, 3]`
@@ -104,5 +104,5 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.mean()`<br>`4`
 - `.product()` `prod` => `float` O(n): Returns the product of the items in the list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.product()`<br>`60`
-- `.delitems(iterable, keep=False)` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html), removing all the items in the list according to the indices supplied in `iterable`, and replaces the contents of the list with the result if `keep` is `False`.
+- `.delitems(iterable, keep=False)` `pops` => `alist` O(n): Performs [`numpy.delete`](https://numpy.org/doc/stable/reference/generated/numpy.delete.html), removing all the items in the list according to the indices supplied in `iterable`, and replaces the contents of the list with the result. Returns the resulting list if `keep` is `False`, otherwise a new list containing the removed elements. Falls back to `.pop` when only removing 1 element, in order to optimise where possible.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.pops([0, 2])`<br>`[4]`
