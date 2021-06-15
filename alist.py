@@ -9,6 +9,19 @@ _nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.ab
 nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
 
 
+# Uses an optional interpolation mode to get a certain position in an iterable.
+def get(v, i, mode=1):
+    size = len(v)
+    i = i.real + i.imag * size
+    if i == int(i) or mode == 0:
+        return v[round(i) % size]
+    elif mode > 0 and mode < 1:
+        return get(v, i, 0) * (1 - mode) + mode * get(v, i, 1)
+    elif mode == 1:
+        return v[floor(i) % size] * (1 - i % 1) + v[ceil(i) % size] * (i % 1)
+    return get(v, i, floor(mode)) * (1 - mode % 1) + (mode % 1) * get(v, i, ceil(mode))
+
+
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     """Custom list-like data structure that incorporates the functionality of numpy arrays, but allocates more space on the ends in order to have faster insertion."""
