@@ -1,9 +1,3 @@
-import numpy, itertools, collections, concurrent.futures
-np = numpy
-from itertools import repeat
-from collections import deque
-
-
 class Dummy(BaseException):
     __slots__ = ()
     __bool__ = lambda: False
@@ -18,8 +12,7 @@ def as_str(s):
 _nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
 nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
 
-
-import numpy, itertools, collections, copy, concurrent.futures
+import math, numpy, itertools, collections, copy, concurrent.futures
 np = numpy
 from itertools import repeat
 from collections import deque
@@ -39,8 +32,10 @@ def get(v, i, mode=1):
     elif mode > 0 and mode < 1:
         return get(v, i, 0) * (1 - mode) + mode * get(v, i, 1)
     elif mode == 1:
-        return v[floor(i) % size] * (1 - i % 1) + v[ceil(i) % size] * (i % 1)
-    return get(v, i, floor(mode)) * (1 - mode % 1) + (mode % 1) * get(v, i, ceil(mode))
+        a = math.floor(i)
+        b = i - a
+        return v[a % size] * (1 - b) + v[math.ceil(i) % size] * b
+    return get(v, i, math.floor(mode)) * (1 - mode % 1) + (mode % 1) * get(v, i, math.ceil(mode))
 
 
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
@@ -568,39 +563,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 except ZeroDivisionError:
                     raise IndexError("Array List index out of range.")
                 return self.view.__getitem__(key)
-            if type(key) is slice:
-                if key.step in (None, 1):
-                    start = key.start
-                    if start is None:
-                        start = 0
-                    stop = key.stop
-                    if stop is None:
-                        stop = self.size
-                    if start >= self.size or stop <= start and (stop >= 0 or stop + self.size <= start):
-                        return self.__class__()
-                    temp = self.__class__(self, fromarray=True)
-                    if start < 0:
-                        if start < -self.size:
-                            start = 0
-                        else:
-                            start %= self.size
-                    if stop < 0:
-                        stop %= self.size
-                    elif stop > self.size:
-                        stop = self.size
-                    temp.offs += start
-                    temp.size = stop - start
-                    if not temp.size:
-                        return self.__class__()
-                    return temp
             return self.__class__(self.view.__getitem__(key), fromarray=True)
         return self.__class__(self.view.__getitem__(*args), fromarray=True)
 
-    # Takes ints, slices and iterables for indexing
+    # Takes ints, floats, slices and iterables for indexing
     @blocking
     def __setitem__(self, *args):
         if len(args) == 2:
             key = args[0]
+            if type(key) in (float, complex):
+                a = math.floor(key)
+                b = key - a
+                self.view[a] = self.view[a] * b + args[1] * (1 - b)
+                self.view[b] = self.view[math.ceil(key)] * (1 - b) + args[1] * b
             if type(key) is int:
                 try:
                     key = key % self.size
@@ -809,7 +784,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.__init__((value,))
             return self
         if not sort:
-            self.__init__(sorted(self, key=key))
+            self.__init__(sorted(self.add(value, force=True), key=key))
+            return self
         if key is None:
             return self.insert(np.searchsorted(self.view, value), value, force=True)
         v = key(value)
