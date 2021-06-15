@@ -911,8 +911,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def count(self, value, key=None):
         if key is None:
-            return sum(self.view == value)
-        return sum(1 for i in self if key(i) == value)
+            return np.sum(self.view == value)
+        return sum(key(i) == value for i in self)
 
     concat = lambda self, value: self.__class__(np.concatenate([self.view, value]))
 
