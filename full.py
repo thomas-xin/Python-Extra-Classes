@@ -19,7 +19,7 @@ _nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.ab
 nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
 
 
-import numpy, itertools, collections, concurrent.futures
+import numpy, itertools, collections, copy, concurrent.futures
 np = numpy
 from itertools import repeat
 from collections import deque
@@ -932,8 +932,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def count(self, value, key=None):
         if key is None:
-            return sum(self.view == value)
-        return sum(1 for i in self if key(i) == value)
+            return np.sum(self.view == value)
+        return sum(key(i) == value for i in self)
 
     concat = lambda self, value: self.__class__(np.concatenate([self.view, value]))
 
@@ -1222,6 +1222,7 @@ hlist = alist
 arange = lambda *args, **kwargs: alist(range(*args, **kwargs))
 afull = lambda size, n=0: alist(repeat(n, size))
 azero = lambda size: alist(repeat(0, size))
+
 
 
 class cdict(dict):
