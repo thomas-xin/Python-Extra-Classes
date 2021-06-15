@@ -1,6 +1,8 @@
 # Included:
 
 ## alist: a numpy-based list-like data type
+
+### Features
 - Mostly stable multithreaded support
 - Pickle library support
 - Allows `a[b]`, `a[b:c]`, `a[[b, c]]` etc indexing as numpy arrays do
@@ -9,7 +11,46 @@
 - Directly supports floating point indexing, in which case will linearly interpolate between adjacent elements when possible.
 - Automatically allocates empty buffers on either side of the list, in order to greatly improve efficiency of appending/removing from it.
 - Automatically creates a frozenset copy of itself when applicable to improve efficiency of `x in y` and related operations
-
+```py
+>>> A = alist((5, 4, 3))
+>>> A
+[5, 4, 3]
+>>> A[1]
+4
+>>> A[-1]
+3
+>>> A[:2]
+[5, 4]
+>>> A[[0, 2]]
+[5, 3]
+>>> A[[False, True, True]]
+[4, 3]
+>>> A[1.25]
+3.75
+>>> A + [1, 2, 3]
+[6, 6, 6]
+>>> A * 2
+[10, 8, 6]
+>>> A.concat([2, 1])
+[5, 4, 3, 2, 1]
+>>> A
+[5, 4, 3]
+>>> A[0] = 100
+>>> A
+[100, 4, 3]
+>>> A[:2] = -1
+>>> A
+[-1, -1, 3]
+>>> A[[1, 2]] = (64, 4096)
+>>> A
+[-1, 64, 4096]
+>>> A[[True, False, True]] = [49, 81]
+>>> A
+[49, 64, 81]
+>>> A[0.75] = 0
+>>> A
+[36.75, 16, 81]
+```
 ### Methods
 - `.next()` => `object` O(1): Returns the next item in the list, starting from 0. The state of this is kept individually per list, and cycles back to the beginning after reaching the end.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.next()`<br>`5`<br>`>>> A.next()`<br>`4`<br>`>>> A.next()`<br>`3`<br>`>>> A.next()`<br>`5`
@@ -95,7 +136,7 @@
 - `.clip(a, b=None)` => `alist` O(n): Performs [`numpy.clip`](https://numpy.org/doc/stable/reference/generated/numpy.clip.html) on the list in-place, with the range defaulting to `[-a, a]` if `b` is not supplied.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.clip(1, 4)`<br>`[4, 4, 3]`
 - `.real()` => `alist` O(n): Returns a copy of the list with all values cast to real numbers, as in [`numpy.real`](https://numpy.org/doc/stable/reference/generated/numpy.real.html).
-- `.imag` `.float` `.complex` `.mpf` Implementations of the other casting functions on the array.
+- `.imag` `.float` `.complex` Implementations of the other casting functions on the array.
 - `.sum()` => `float` O(n): Returns the sum of the items in the list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.sum()`<br>`12`
 - `.mean()` => `float` O(n): Returns the mean of the items in the list.
