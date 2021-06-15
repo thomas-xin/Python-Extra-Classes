@@ -52,6 +52,10 @@
 [36.75, 16, 81]
 ```
 ### Methods
+- *@property* `.view` => `numpy.ndarray` O(1): Returns the numpy array representing the contents of the list. `dtype` `object`.
+- *@property* `.data` => `numpy.ndarray` O(1): Returns the numpy array representing the entire list buffer, including the data outside the current list.
+- *@property* `.offs` => `int` O(1): Returns the index relative to the list buffer where the current list data begins.
+- *@property* `.size` => `int` O(1): Returns the length of the valid part of the list.
 - `.next()` => `object` O(1): Returns the next item in the list, starting from 0. The state of this is kept individually per list, and cycles back to the beginning after reaching the end.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.next()`<br>`5`<br>`>>> A.next()`<br>`4`<br>`>>> A.next()`<br>`3`<br>`>>> A.next()`<br>`5`
 - `.clear()` => `alist` O(1): Empties the list, removing all of its contents, then returning itself.
