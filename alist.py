@@ -775,7 +775,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.__init__((value,))
             return self
         if not sort:
-            self.__init__(sorted(self, key=key))
+            self.__init__(sorted(self.add(value, force=True), key=key))
+            return self
         if key is None:
             return self.insert(np.searchsorted(self.view, value), value, force=True)
         v = key(value)
@@ -1154,11 +1155,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @waiting
     def mean(self):
-        return np.mean(self.view)
+        x = np.mean(self.view)
+        y = int(x)
+        if x == y:
+            return y
+        return x
 
     @waiting
     def product(self):
-        return np.prod(self.view)
+        x = np.prod(self.view)
+        y = int(x)
+        if x == y:
+            return y
+        return x
 
     prod = product
 
