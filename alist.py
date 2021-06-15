@@ -914,7 +914,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             return np.sum(self.view == value)
         return sum(key(i) == value for i in self)
 
-    concat = lambda self, value: self.__class__(np.concatenate([self.view, value]))
+    concat = lambda self, value: self.__class__(np.concatenate([self.view, value]), dtype=object)
 
     # Appends item at the start of the list, reallocating when necessary.
     @blocking
@@ -956,7 +956,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.offs -= len(value)
             self.size += len(value)
             return self
-        self.__init__(np.concatenate([value, self.view]))
+        self.__init__(np.concatenate([value, self.view]), dtype=object)
         return self
 
     # Appends iterable at the end of the list, reallocating when necessary.
@@ -970,7 +970,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             self.data[self.offs + self.size:self.offs + self.size + len(value)] = value
             self.size += len(value)
             return self
-        self.__init__(np.concatenate([self.view, value]))
+        self.__init__(np.concatenate([self.view, value]), dtype=object)
         return self
 
     extendright = extend
