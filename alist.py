@@ -701,7 +701,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def get(self, key, default=None):
         try:
             return self.view[key]
-        except LookupError:
+        except (TypeError, LookupError):
             return default
 
     @blocking
