@@ -996,7 +996,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     extendright = extend
 
-    # Similar to str.join
+    # Similar to str.join().
     @waiting
     def join(self, iterable):
         iterable = self.to_iterable(iterable)
@@ -1014,9 +1014,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @blocking
     def replace(self, original, new):
         view = self.view
-        for i, v in enumerate(view):
-            if v == original:
-                view[i] = new
+        view[view == original] = new
         return self
 
     # Fills list with value(s).
