@@ -27,8 +27,6 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.rotate(1)`<br>`[3, 5, 4]`
 - `.rotateleft(steps)` => `alist` O(n): The reverse of `.rotate`, rotating the list in the opposite direction.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.rotateleft(1)`<br>`[4, 3, 5]`
-- `.isempty()` => `bool` O(n): Determines if the list is empty. O(1) under normal conditions, but will automatically re-allocate the list if there is too much wasted space in it due to other operations.
-  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.isempty()`<br>`False`
 - `.get(key, default=None)` => `object` O(1): Fetches an entry in the list using `key` as index, returning `default` if not found. Works similarly to [`dict.get`](https://docs.python.org/3/library/stdtypes.html#dict.get).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.get(4, 100)`<br>`100`
 - `.popleft()` => `object` O(1): Pops the leftmost (index 0) entry in the list and returns it.
@@ -43,7 +41,7 @@
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.insort(4.5, sort=False)`<br>`[3, 4, 4.5, 5]`
 - `.remove(value, count=None, key=None, sort=False, last=False)` `.discard` => `alist` O(n): Removes up to `count` instances of the target from the list, `key` being an optional identifier function called on the list's values to match to `value`, `sort` indicating whether or not the list is already sorted (set to `True` for already sorted lists to reduce computation time slightly), and `last` indicating whether to remove starting from the end of the list instead of the beginning, only relevant if `count` is set. Returns the resulting list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.remove(5)`<br>`[4, 3]`
-- `.removedups(sort=True)` `uniq` `unique` => `alist` O(n*log(n)): Removes all duplicate items in the list according to the `==` operation, with an optional `sort` argument indicating whether to sort the list simultaneously. Can be close to O(n) in most circumstances.
+- `.removedups(sort=True)` `uniq` `unique` => `alist` O(n*log(n)): Removes all duplicate items in the list according to the `==` operation, with an optional `sort` argument indicating whether to sort the list simultaneously
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.append(4)`<br>`[5, 4, 3, 4]`<br>`>>> A.uniq(sort=False)`<br>`[5, 4, 3]`
 - `.index(value, key=None, sort=False)` => `int` O(n): Searches for the index of the first entry in the list that matches the specified value similarly to [`list.index`](https://docs.python.org/3/tutorial/datastructures.html#list.index), with an optional function `key` to be used on the entries in the list. Pass `sort=True` to use binary search to improve computational efficiency to O(log(n)) for lists that are already sorted.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.index(4)`<br>`1`
