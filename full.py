@@ -659,7 +659,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         return self
 
     @waiting
-    def copy(self):
+    def copy(self, deep=False):
+        if deep:
+            return self.__class__(copy.deepcopy(self.view))
         return self.__class__(self.view.copy())
 
     @waiting
@@ -719,8 +721,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def get(self, key, default=None):
         try:
-            return self[key]
-        except LookupError:
+            return self.view[key]
+        except (TypeError, LookupError):
             return default
 
     @blocking
