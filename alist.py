@@ -542,7 +542,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         if len(args) == 1:
             key = args[0]
             if type(key) in (float, complex):
-                return get(self.view, key, 1)
+                x = get(self.view, key, 1)
+                y = int(x)
+                if x == y:
+                    return y
+                return x
             if type(key) is int:
                 try:
                     key = key % self.size
@@ -561,8 +565,16 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 a = math.floor(key)
                 b = key - a
                 c = math.ceil(key)
-                self.view[c] = self.view[c] * (1 - b) + args[1] * b
-                self.view[a] = self.view[a] * b + args[1] * (1 - b)
+                x = self.view[c] * (1 - b) + args[1] * b
+                y = int(x)
+                if x == y:
+                    x = y
+                self.view[c] = x
+                x = self.view[a] * b + args[1] * (1 - b)
+                y = int(x)
+                if x == y:
+                    x = y
+                self.view[a] = x
                 return
             if type(key) is int:
                 try:
