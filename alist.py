@@ -547,7 +547,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                     y = int(x)
                     if x == y:
                         return y
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
                 return x
             if type(key) is int:
@@ -564,7 +564,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     def __setitem__(self, *args):
         if len(args) == 2:
             key = args[0]
-            if type(key) in (float, complex):
+            if type(key) in (float, complex) and int(key.real) != key:
                 a = math.floor(key)
                 b = key - a
                 c = math.ceil(key)
