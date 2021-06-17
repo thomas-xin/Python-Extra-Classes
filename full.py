@@ -557,9 +557,12 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             key = args[0]
             if type(key) in (float, complex):
                 x = get(self.view, key, 1)
-                y = int(x)
-                if x == y:
-                    return y
+                try:
+                    y = int(x)
+                    if x == y:
+                        return y
+                except ValueError:
+                    pass
                 return x
             if type(key) is int:
                 try:
