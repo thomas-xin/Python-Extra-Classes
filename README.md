@@ -10,7 +10,7 @@
 - Is a proper subclass of `collections.abc.MutableSequence`, meaning `len`, `bool`, `iter` and the like are all supported.
 - Directly supports floating point indexing, in which case will linearly interpolate between adjacent elements when possible.
 - Automatically allocates empty buffers on either side of the list, in order to greatly improve efficiency of appending/removing from it.
-- Automatically creates a frozenset copy of itself when applicable to improve efficiency of `x in y` and related operations
+- Automatically creates a frozenset copy of itself when applicable to improve efficiency of consequent `x in y` and related operations
 ```py
 >>> A = alist((5, 4, 3))
 >>> A
