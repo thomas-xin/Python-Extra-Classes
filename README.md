@@ -99,11 +99,11 @@ Note: methods highlighted in **bold** can potentially mutate (modify) the conten
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.count(1, key=lambda x: x >= 4)`<br>`2`
 - `.concat(value)` => `alist` O(n+k): Returns a copy of the list with the target list concatenated to the end. Does not modify either lists.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.concat([2, 1])`<br>`[5, 4, 3, 2, 1]`
-- **`.appendleft(value)`** => `alist` O(sqrt(n)): Appends the specified value into the front of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
+- **`.appendleft(value)`** => `alist` O(1): Appends the specified value into the front of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.appendleft(6)`<br>`[6, 5, 4, 3]`
-- **`.append(value)`** **`appendright`** => `alist` O(sqrt(n)): Appends the specified value to the end of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
+- **`.append(value)`** **`appendright`** => `alist` O(1): Appends the specified value to the end of the list. Uses the buffer to lower time complexity to O(1), re-allocating the list for O(n) when necessary.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.append({2})`<br>`[5, 4, 3, {2}]`
-- **`.add(value)`** => `alist` O(sqrt(n)): Adds the specified value to the list, in a random direction, similar to [`set.add`](https://docs.python.org/3/library/stdtypes.html#frozenset.add). Can potentially save on buffer re-allocations compared to `appendleft` and `append`.
+- **`.add(value)`** => `alist` O(1): Adds the specified value to the list, in a random direction, similar to [`set.add`](https://docs.python.org/3/library/stdtypes.html#frozenset.add). Can potentially save on buffer re-allocations compared to `appendleft` and `append`.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.add({(9, 8): [7, 6]})`<br>`[{(9, 8): [7, 6]}, 5, 4, 3]`
 - **`.extendleft(value)`** => `alist` O(n+k): Extends the list to the left using elements from iterable `value`, similarly to [`collections.deque.extendleft`](https://docs.python.org/3/library/collections.html#collections.deque.extendleft).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extendleft(range(6, 10))`<br>`[9, 8, 7, 6, 5, 4, 3]`
