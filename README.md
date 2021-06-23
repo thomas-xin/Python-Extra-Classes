@@ -107,7 +107,7 @@ Note: methods highlighted in **bold** can potentially mutate (modify) the conten
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.add({(9, 8): [7, 6]})`<br>`[{(9, 8): [7, 6]}, 5, 4, 3]`
 - **`.extendleft(value)`** => `alist` O(n+k): Extends the list to the left using elements from iterable `value`, similarly to [`collections.deque.extendleft`](https://docs.python.org/3/library/collections.html#collections.deque.extendleft).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extendleft(range(6, 10))`<br>`[9, 8, 7, 6, 5, 4, 3]`
-- **`.extend(value)`** `extendright` => `alist` O(n+k): Extends the list to the right using elements from iterable `value`.
+- **`.extend(value)`** **`extendright`** => `alist` O(n+k): Extends the list to the right using elements from iterable `value`.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.extend(("2", b"1"))`<br>`[5, 4, 3, '2', b'1']`
 - `.join(value)` => `alist` O(nk): Concatenates a copy of the list to every item in the specified iterable `value`, similar to [`str.join`](https://docs.python.org/3/library/stdtypes.html#str.join).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.join({"a", "b", "c"})`<br>`['a', 5, 4, 3, 'b', 5, 4, 3, 'c']`
