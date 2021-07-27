@@ -1023,6 +1023,23 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         view[view == original] = new
         return self
 
+    # Similar to str.strip().
+    @blocking
+    def strip(self, *values):
+        for v in values:
+            pops = 0
+            for e in self:
+                if e == v:
+                    pops += 1
+            self.offs += pops
+            self.size -= pops
+            pops = 0
+            for e in reversed(self):
+                if e == v:
+                    pops += 1
+            self.size -= pops
+        return self
+
     # Fills list with value(s).
     @blocking
     def fill(self, value):
