@@ -113,6 +113,8 @@ Note: methods highlighted in **bold** can potentially mutate (modify) the conten
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.join({"a", "b", "c"})`<br>`['a', 5, 4, 3, 'b', 5, 4, 3, 'c']`
 - **`.replace(original, new)`** => `alist` O(n): Replaces elements in the list matching `original` with `new`, similar to [`str.replace`](https://docs.python.org/3/library/stdtypes.html#str.replace).
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.replace(3, "3")`<br>`[5, 4, '3']`
+- **`.strip(*values)`** => `alist` O(n): Removes all trailing elements matching any item in `values`, similar to [`str.strip`](https://docs.python.org/3/library/stdtypes.html#str.strip).
+  - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.replace(3, "3")`<br>`[5, 4, '3']`
 - **`.fill(value)`** => `alist` O(n): Fills the list with the specified value or iterable.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.fill(-1)`<br>`[-1, -1, -1]`<br>`>>> A.fill([1, 2, 3, 4])`<br>`[1, 2, 3, 4]`
 - `.keys()` => `range` O(1): Returns a range object representing the list's indices, similar to [`dict.keys`](https://docs.python.org/3/library/stdtypes.html#dict.keys)
