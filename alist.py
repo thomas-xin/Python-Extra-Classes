@@ -885,7 +885,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 return pops
             else:
                 mask = self.view == value
-                return self.__class__(np.arange(len(mask), dtype=np.uint32)[mask])
+                try:
+                    ml = len(mask)
+                except TypeError:
+                    ml = 1
+                return self.__class__(np.arange(ml, dtype=np.uint32)[mask])
         if sort:
             v = value
             d = self.data
