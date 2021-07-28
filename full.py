@@ -898,7 +898,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                         break
                 return pops
             else:
-                return self.__class__(np.arange(self.size, dtype=np.uint32)[self.view == value])
+                mask = self.view == value
+                return self.__class__(np.arange(len(mask), dtype=np.uint32)[mask])
         if sort:
             v = value
             d = self.data
