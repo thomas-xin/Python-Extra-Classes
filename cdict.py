@@ -36,6 +36,11 @@ class cdict(dict):
         data.update(self)
         return data
 
+    def union(self, other):
+        temp = self.copy()
+        temp.update(other)
+        return temp
+
     @property
     def __dict__(self):
         return self
