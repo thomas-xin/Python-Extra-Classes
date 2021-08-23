@@ -36,9 +36,12 @@ class cdict(dict):
         data.update(self)
         return data
 
-    def union(self, other):
+    def union(self, other=None, **kwargs):
         temp = self.copy()
-        temp.update(other)
+        if other:
+            temp.update(other)
+        if kwargs:
+            temp.update(kwargs)
         return temp
 
     @property
