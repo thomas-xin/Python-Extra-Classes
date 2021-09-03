@@ -652,7 +652,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
                 other = [other]
         if len(other) not in (1, self.size) and not force:
             raise IndexError(f"Unable to perform operation on objects with size {self.size} and {len(other)}.")
-        return other
+        return np.asanyarray(other)
 
     @blocking
     def clear(self):
