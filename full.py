@@ -55,31 +55,34 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
             return func(self, *args, **kwargs)
         return call
 
+    def acquire(self, force=False):
+        if not force and type(self.block) is concurrent.futures.Future:
+            self.block.result(timeout=12)
+        self.block = concurrent.futures.Future()
+        self.hash = None
+        self.frozenset = None
+        try:
+            del self.queries
+        except AttributeError:
+            pass
+
+    def release(self):
+        try:
+            self.block.set_result(None)
+        except concurrent.futures.InvalidStateError:
+            pass
+
     # For thread-safety: Blocks the list until the operation is complete.
     def blocking(self):
         func = self
         def call(self, *args, force=False, **kwargs):
-            if not force and type(self.block) is concurrent.futures.Future:
-                self.block.result(timeout=12)
-            self.block = concurrent.futures.Future()
-            self.hash = None
-            self.frozenset = None
-            try:
-                del self.queries
-            except AttributeError:
-                pass
+            self.acquire(force)
             try:
                 output = func(self, *args, **kwargs)
             except:
-                try:
-                    self.block.set_result(None)
-                except concurrent.futures.InvalidStateError:
-                    pass
+                self.release()
                 raise
-            try:
-                self.block.set_result(None)
-            except concurrent.futures.InvalidStateError:
-                pass
+            self.release()
             return output
         return call
 
@@ -977,32 +980,36 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     appendright = append
 
     # Appends iterable at the start of the list, reallocating when necessary.
-    @blocking
+    @waiting
     def extendleft(self, value):
-        if self.data is None or not self.size:
-            self.__init__(reversed(value))
-            return self
         value = self.to_iterable(reversed(value), force=True)
+        if self.data is None or not self.size:
+            self.fill(value)
+            return self
         if self.offs >= len(value):
+            self.acquire()
             self.data[self.offs - len(value):self.offs] = value
             self.offs -= len(value)
             self.size += len(value)
+            self.release()
             return self
-        self.__init__(np.concatenate([value, self.view]), dtype=object)
+        self.fill(np.append(value, self.view))
         return self
 
     # Appends iterable at the end of the list, reallocating when necessary.
-    @blocking
+    @waiting
     def extend(self, value):
-        if self.data is None or not self.size:
-            self.__init__(value)
-            return self
         value = self.to_iterable(value, force=True)
+        if self.data is None or not self.size:
+            self.fill(value)
+            return self
         if len(self.data) - self.offs - self.size >= len(value):
+            self.acquire()
             self.data[self.offs + self.size:self.offs + self.size + len(value)] = value
             self.size += len(value)
+            self.release()
             return self
-        self.__init__(np.concatenate([self.view, value]), dtype=object)
+        self.fill(np.append(self.view, value))
         return self
 
     extendright = extend
@@ -1050,7 +1057,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
         try:
             self.view[:] = value
         except:
-            self.__init__(value)
+            self.__init__(self.to_iterable(value, force=True))
         return self
 
     # For compatibility with dict() attributes.
