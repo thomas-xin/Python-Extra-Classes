@@ -516,18 +516,18 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
     @waiting
     def __lt__(self, other):
-        it = self.to_iterable(other)
+        other = self.to_iterable(other)
         return self.view < other
 
     @waiting
     def __le__(self, other):
-        it = self.to_iterable(other)
+        other = self.to_iterable(other)
         return self.view <= other
 
     @waiting
     def __eq__(self, other):
         try:
-            it = self.to_iterable(other)
+            other = self.to_iterable(other)
             return self.view == other
         except (TypeError, IndexError):
             return
@@ -535,19 +535,19 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @waiting
     def __ne__(self, other):
         try:
-            it = self.to_iterable(other)
+            other = self.to_iterable(other)
             return self.view != other
         except (TypeError, IndexError):
-            return
+            return True
 
     @waiting
     def __gt__(self, other):
-        it = self.to_iterable(other)
+        other = self.to_iterable(other)
         return self.view > other
 
     @waiting
     def __ge__(self, other):
-        it = self.to_iterable(other)
+        other = self.to_iterable(other)
         return self.view >= other
 
     # Takes ints, floats, slices and iterables for indexing
