@@ -1041,6 +1041,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
     @blocking
     def fill(self, value):
         try:
+            if not self.size:
+                raise
             self.view[:] = value
         except:
             self.__init__(self.to_iterable(value, force=True))
