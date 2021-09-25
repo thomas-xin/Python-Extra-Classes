@@ -1443,7 +1443,19 @@ class fdict(cdict):
             return self[k]
         except KeyError:
             return default
-        
+
+    def __contains__(self, k):
+        if dict.__contains__(self, k):
+            return True
+        try:
+            self.get_feed()
+        except AttributeError:
+            return False
+        for f in self.get_feed():
+            if f.__contains__(k):
+                return True
+        return False
+
 
 class demap(collections.abc.Mapping):
     
