@@ -123,6 +123,8 @@ Note: methods highlighted in **bold** can potentially mutate (modify) the conten
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.values()`<br>`<iterator object at 0x0000000000000000>`
 - `.items()` => `enumerate` O(1): Returns an iterator, similar to [`dict.items`](https://docs.python.org/3/library/stdtypes.html#dict.values). Functionally identical to calling [`enumerate`](https://docs.python.org/3/library/functions.html#iter) on the list.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.items()`<br>`<enumerate object at 0x0000000000000000>`
+- `.eq(other)` => `numpy.ndarray` O(n): Returns a bool numpy array representing the typical `==` operation for numpy arrays.
+- `.ne(other)` => `numpy.ndarray` O(n): Returns a bool numpy array representing the typical `!=` operation for numpy arrays.
 - `.isdisjoint(other)` => `bool` O(n): Performs [`set.isdisjoint`](https://docs.python.org/3/library/stdtypes.html#frozenset.isdisjoint) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
   - Example:<br>`>>> A = alist((5, 4, 3))`<br>`>>> A.isdisjoint({6, 7, 8})`<br>`True`
 - `.issubset(other)` => `bool` O(n): Performs [`set.issubset`](https://docs.python.org/3/library/stdtypes.html#frozenset.issubset) on the list. Caches the resulting copied set of the list for future set operations, until the list is modified.
