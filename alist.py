@@ -516,6 +516,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@waiting
 	def __eq__(self, other):
 		try:
+			if id(self) == id(other):
+				return True
 			if len(self) != len(other):
 				return False
 			other = self.to_iterable(other)
@@ -526,6 +528,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@waiting
 	def __ne__(self, other):
 		try:
+			if id(self) == id(other):
+				return False
 			if len(self) != len(other):
 				return True
 			other = self.to_iterable(other)
@@ -535,11 +539,15 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@waiting
 	def eq(self, other):
+		if id(self) == id(other):
+			return np.ones(self.size, dtype=bool)
 		other = self.to_iterable(other)
 		return self.view == other
 
 	@waiting
 	def ne(self, other):
+		if id(self) == id(other):
+			return np.zeros(self.size, dtype=bool)
 		other = self.to_iterable(other)
 		return self.view != other
 
