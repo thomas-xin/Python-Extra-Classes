@@ -516,18 +516,32 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@waiting
 	def __eq__(self, other):
 		try:
+			if len(self) != len(other):
+				return False
 			other = self.to_iterable(other)
-			return self.view == other
+			return all(self.view == other)
 		except (TypeError, IndexError):
-			return
+			return False
 
 	@waiting
-	def __ne__(self, other):
+	def __eq__(self, other):
 		try:
+			if len(self) != len(other):
+				return True
 			other = self.to_iterable(other)
-			return self.view != other
+			return any(self.view != other)
 		except (TypeError, IndexError):
 			return True
+
+	@waiting
+	def eq(self, other):
+		other = self.to_iterable(other)
+		return self.view == other
+
+	@waiting
+	def ne(self, other):
+		other = self.to_iterable(other)
+		return self.view != other
 
 	@waiting
 	def __gt__(self, other):
