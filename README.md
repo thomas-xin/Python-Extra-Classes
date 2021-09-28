@@ -51,6 +51,14 @@
 >>> A
 [36.75, 16, 81]
 ```
+- Note: `__eq__` and `__ne__` (`==` and `!=`) will act like the python `list` counterparts, not the numpy versions:
+```py
+>>> A == [36.75, 16, 81]
+True
+>>> A != "a"
+True
+```
+- To use the numpy variants that return an array of booleans, see `.eq` below.
 ### Methods
 Note: methods highlighted in **bold** can potentially mutate (modify) the contents of the list.
 - *@property* `.view` => `numpy.ndarray` O(1): Returns the numpy array representing the contents of the list. `dtype` `object`.
