@@ -616,7 +616,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return False
 
 	@waiting
-	def __eq__(self, other):
+	def __ne__(self, other):
 		try:
 			if len(self) != len(other):
 				return True
