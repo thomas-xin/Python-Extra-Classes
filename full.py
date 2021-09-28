@@ -90,6 +90,32 @@ def get(v, i, mode=1):
 	return get(v, i, math.floor(mode)) * (1 - mode % 1) + (mode % 1) * get(v, i, math.ceil(mode))
 
 
+import math, numpy, itertools, collections, copy, concurrent.futures
+np = numpy
+from itertools import repeat
+from collections import deque
+
+
+# Creates a nested tuple from a nested list.
+_nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
+nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
+
+
+# Uses an optional interpolation mode to get a certain position in an iterable.
+def get(v, i, mode=1):
+	size = len(v)
+	i = i.real + i.imag * size
+	if i == int(i) or mode == 0:
+		return v[round(i) % size]
+	elif mode > 0 and mode < 1:
+		return get(v, i, 0) * (1 - mode) + mode * get(v, i, 1)
+	elif mode == 1:
+		a = math.floor(i)
+		b = i - a
+		return v[a % size] * (1 - b) + v[math.ceil(i) % size] * b
+	return get(v, i, math.floor(mode)) * (1 - mode % 1) + (mode % 1) * get(v, i, math.ceil(mode))
+
+
 class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	"""Custom list-like data structure that incorporates the functionality of numpy arrays, but allocates more space on the ends in order to have faster insertion."""
@@ -582,18 +608,32 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@waiting
 	def __eq__(self, other):
 		try:
+			if len(self) != len(other):
+				return False
 			other = self.to_iterable(other)
-			return self.view == other
+			return all(self.view == other)
 		except (TypeError, IndexError):
-			return
+			return False
 
 	@waiting
-	def __ne__(self, other):
+	def __eq__(self, other):
 		try:
+			if len(self) != len(other):
+				return True
 			other = self.to_iterable(other)
-			return self.view != other
+			return any(self.view != other)
 		except (TypeError, IndexError):
 			return True
+
+	@waiting
+	def eq(self, other):
+		other = self.to_iterable(other)
+		return self.view == other
+
+	@waiting
+	def ne(self, other):
+		other = self.to_iterable(other)
+		return self.view != other
 
 	@waiting
 	def __gt__(self, other):
@@ -732,15 +772,15 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def sort(self, *args, **kwargs):
-		return self.fill(sorted(self.view, *args, **kwargs))
+		return self.fill(sorted(self.view, *args, **kwargs), force=True)
 
 	@blocking
 	def shuffle(self, *args, **kwargs):
-		return self.fill(shuffle(self.view, *args, **kwargs))
+		return self.fill(shuffle(self.view, *args, **kwargs), force=True)
 
 	@blocking
 	def reverse(self):
-		return self.fill(np.flip(self.view))
+		return self.fill(np.flip(self.view), force=True)
 
 	# Rotates the list a certain amount of steps, using np.roll for large rotate operations.
 	@blocking
