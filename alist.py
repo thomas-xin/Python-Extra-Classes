@@ -666,15 +666,15 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def sort(self, *args, **kwargs):
-		return self.fill(sorted(self.view, *args, **kwargs))
+		return self.fill(sorted(self.view, *args, **kwargs), force=True)
 
 	@blocking
 	def shuffle(self, *args, **kwargs):
-		return self.fill(shuffle(self.view, *args, **kwargs))
+		return self.fill(shuffle(self.view, *args, **kwargs), force=True)
 
 	@blocking
 	def reverse(self):
-		return self.fill(np.flip(self.view))
+		return self.fill(np.flip(self.view), force=True)
 
 	# Rotates the list a certain amount of steps, using np.roll for large rotate operations.
 	@blocking
