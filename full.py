@@ -1083,7 +1083,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		self.size += 1
 		return self
 
-	add = lambda self, value: object.__getattribute__(self, ("append", "appendleft")[len(self.data) - self.size - self.offs > self.offs])(value)
+	add = lambda self, value: object.__getattribute__(self, ("appendleft", "append")[len(self.data if self.data is not None else ()) - self.size - self.offs > self.offs])(value)
 	appendright = append
 
 	# Appends iterable at the start of the list, reallocating when necessary.
