@@ -991,7 +991,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		self.size += 1
 		return self
 
-	add = lambda self, value: object.__getattribute__(self, ("append", "appendleft")[random.randint(0, 1)])(value)
+	add = lambda self, value: object.__getattribute__(self, ("append", "appendleft")[len(self.data) - self.size - self.offs > self.offs])(value)
 	appendright = append
 
 	# Appends iterable at the start of the list, reallocating when necessary.
