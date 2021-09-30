@@ -784,7 +784,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def shuffle(self, *args, **kwargs):
-		return self.fill(shuffle(self.view, *args, **kwargs), force=True)
+		np.shuffle(self.view, *args, **kwargs)
+		return self
 
 	@blocking
 	def reverse(self):
