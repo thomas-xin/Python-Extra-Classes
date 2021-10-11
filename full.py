@@ -235,10 +235,12 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					pass
 
 	def __getstate__(self):
+		if getattr(self, "_index", None):
+			return self.data, self.offs, self._index
 		return self.data, self.offs, self.size
 
 	def __setstate__(self, s):
-		if type(s) is tuple:
+		if isinstance(s, tuple):
 			if len(s) == 2:
 				if s[0] is None:
 					for k, v in s[1].items():
@@ -257,7 +259,10 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					pass
 				self.block = None
 				return
-			elif len(s) == 3:
+			if len(s) == 4:
+				self._index = s[3]
+				s = s[:3]
+			if len(s) == 3:
 				self.data, self.offs, self.size = s
 				self.hash = None
 				self.frozenset = None
@@ -267,6 +272,18 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					pass
 				self.block = None
 				return
+		elif isinstance(s, dict):
+			self.data = s["data"]
+			self.offs = s.get("offs", 0)
+			self.size = s.get("size", len(self.data))
+			self.hash = None
+			self.frozenset = None
+			try:
+				del self.queries
+			except AttributeError:
+				pass
+			self.block = None
+			return
 		raise TypeError("Unpickling failed:", s)
 
 	def __getattr__(self, k):
