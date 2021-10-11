@@ -1488,7 +1488,17 @@ class fdict(cdict):
 			return super().keys()
 		return self._keys()
 
-	__len__ = lambda self: sum(1 for _ in self._keys())
+	def __len__(self):
+		count = len(super().keys())
+		try:
+			feed = self.get_feed()
+		except AttributeError:
+			pass
+		else:
+			for v in feed:
+				count += len(v)
+		return count
+
 	__iter__ = lambda self: iter(super().keys())
 
 	def _values(self):
