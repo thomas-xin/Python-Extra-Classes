@@ -1471,15 +1471,10 @@ class fdict(cdict):
 		return feed
 
 	def _keys(self):
-		found = set()
-		for k in super().keys():
-			found.add(k)
-			yield k
+		found = set(super().keys())
 		for f in self.get_feed():
-			for k in f:
-				if k not in found:
-					found.add(k)
-					yield k
+			found.update(f)
+		return found
 
 	def keys(self):
 		try:
@@ -1488,17 +1483,7 @@ class fdict(cdict):
 			return super().keys()
 		return self._keys()
 
-	def __len__(self):
-		count = len(super().keys())
-		try:
-			feed = self.get_feed()
-		except AttributeError:
-			pass
-		else:
-			for v in feed:
-				count += len(v)
-		return count
-
+	_len_ = __len__ = lambda self: len(self.keys())
 	__iter__ = lambda self: iter(super().keys())
 
 	def _values(self):
@@ -1536,19 +1521,6 @@ class fdict(cdict):
 		except AttributeError:
 			return super().items()
 		return self._items()
-
-	def _len_(self):
-		size = len(self)
-		try:
-			self.get_feed()
-		except AttributeError:
-			return size
-		for f in self.get_feed():
-			try:
-				size += f._len_()
-			except AttributeError:
-				size += len(f)
-		return size
 
 	def __getitem__(self, k):
 		try:
