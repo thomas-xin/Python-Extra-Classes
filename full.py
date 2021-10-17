@@ -697,7 +697,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if isinstance(other, self.__class__):
 			other = other.view
 		if isinstance(other, np.ndarray):
-			if other.dtype is object:
+			if other.dtype == "O":
 				return other
 			return other.astype(object)
 		x = np.empty(len(other), dtype=object)
