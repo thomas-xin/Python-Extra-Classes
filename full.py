@@ -131,7 +131,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			self.size = len(iterable)
 			self.data = iterable.astype(object)
 		else:
-			if not issubclass(type(iterable), collections.abc.Sequence) or issubclass(type(iterable), collections.abc.Mapping) or type(iterable) in (str, bytes):
+			if not isinstance(iterable, (collections.abc.Sequence, collections.abc.Mapping, np.ndarray)) or type(iterable) in (str, bytes):
 				try:
 					iterable = deque(iterable)
 				except TypeError:
@@ -687,7 +687,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	# Creates an iterable from an iterator, making sure the shape matches.
 	def to_iterable(self, other, force=False):
-		if not issubclass(type(other), collections.abc.Sequence) or issubclass(type(other), collections.abc.Mapping):
+		if not isinstance(other, (collections.abc.Sequence, np.ndarray)) or isinstance(other, collections.abc.Mapping):
 			try:
 				other = list(other)
 			except TypeError:
