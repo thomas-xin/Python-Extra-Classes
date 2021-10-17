@@ -666,7 +666,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			if self.frozenset is not None:
 				return item in self.frozenset
 			self.queries += 1
-		except AttributeError:
+		except (AttributeError, TypeError):
 			self.queries = 1
 		return item in self.view
 
