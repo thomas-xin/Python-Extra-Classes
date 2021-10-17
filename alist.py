@@ -680,6 +680,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 				other = [other]
 		if len(other) not in (1, self.size) and not force:
 			raise IndexError(f"Unable to perform operation on objects with size {self.size} and {len(other)}.")
+		if isinstance(other, self.__class__):
+			other = other.view
 		if isinstance(other, np.ndarray):
 			if other.dtype is object:
 				return other
@@ -1087,7 +1089,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@blocking
 	def fill(self, value):
 		try:
-			if isinstance(value, np.ndarray):
+			if isinstance(value, np.ndarray) or isinstance(value, self.__class__):
 				raise
 			try:
 				if len(value) == 1:
