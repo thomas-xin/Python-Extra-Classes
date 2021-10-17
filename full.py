@@ -1106,13 +1106,20 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			if isinstance(value, np.ndarray) or isinstance(value, self.__class__):
 				raise
 			try:
-				if len(value) == 1:
+				if len(value) == 1 or len(value) > len(self.data):
 					raise
 			except TypeError:
 				pass
 			if not self.size:
 				raise
-			self.view[:] = value
+			try:
+				x = len(self.data) - len(value) >> 1
+			except TypeError:
+				self.view[:] = value
+			else:
+				self.data[x:x + len(value)] = value
+				self.size = len(value)
+				self.offs = x
 		except:
 			self.data = self.to_iterable(value, force=True)
 			self.size = len(self.data)
