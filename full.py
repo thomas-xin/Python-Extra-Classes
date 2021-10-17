@@ -120,12 +120,13 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		else:
 			iterable = args
 		if issubclass(type(iterable), self.__class__) and iterable:
-			self.offs = iterable.offs
-			self.size = iterable.size
 			if fromarray:
 				self.data = iterable.data
+				self.offs = iterable.offs
 			else:
-				self.data = iterable.data.copy()
+				self.data = iterable.view.copy()
+				self.offs = 0
+			self.size = iterable.size
 		elif fromarray and isinstance(iterable, np.ndarray):
 			self.offs = 0
 			self.size = len(iterable)
@@ -679,7 +680,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			if self.frozenset is not None:
 				return item in self.frozenset
 			self.queries += 1
-		except AttributeError:
+		except (AttributeError, TypeError):
 			self.queries = 1
 		return item in self.view
 
@@ -1328,9 +1329,10 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	pops = delitems
 
 hlist = alist
-arange = lambda *args, **kwargs: alist(range(*args, **kwargs))
-afull = lambda size, n=0: alist(repeat(n, size))
-azero = lambda size: alist(repeat(0, size))
+arange = lambda *args, **kwargs: alist(np.arange(*args, **kwargs, dtype=object), fromarray=True)
+afull = lambda size, n=0: alist(np.full(size, n, dtype=object), fromarray=True)
+azero = lambda size: alist(np.zeros(size, dtype=object), fromarray=True)
+aempty = lambda size: alist(np.empty(size, dtype=object), fromarray=True)
 
 
 class cdict(dict):
