@@ -645,7 +645,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	__len__ = lambda self: self.size
 	__length_hint__ = __len__
 	__iter__ = lambda self: iter(self.view)
-	__reversed__ = lambda self: iter(np.flip(self.view))
+	__reversed__ = lambda self: iter(self.view[::-1])
 
 	def next(self):
 		try:
@@ -714,7 +714,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def reverse(self):
-		return self.fill(np.flip(self.view), force=True)
+		return self.fill(self.view[::-1], force=True)
 
 	# Rotates the list a certain amount of steps, using np.roll for large rotate operations.
 	@blocking
@@ -1014,7 +1014,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	# Appends iterable at the start of the list, reallocating when necessary.
 	@waiting
 	def extendleft(self, value):
-		value = self.to_iterable(reversed(value), force=True)
+		value = self.to_iterable(value, force=True)[::-1]
 		if self.data is None or not self.size:
 			self.fill(value)
 			return self
