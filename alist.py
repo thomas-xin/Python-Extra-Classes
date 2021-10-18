@@ -594,7 +594,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					pass
 				return x
 			if type(key) is int:
-				if key > self.size:
+				if key >= self.size:
 					try:
 						key = key % self.size
 					except ZeroDivisionError:
