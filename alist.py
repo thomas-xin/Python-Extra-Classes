@@ -736,8 +736,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 				self.appendright(self.popleft(force=True), force=True)
 				steps += 1
 			return self
-		self.offs = (len(self.data) - self.size) // 3
-		self.view[:] = np.roll(self.view, steps)
+		self.fill(np.roll(self.view, steps))
 		return self
 
 	@blocking
@@ -897,9 +896,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					if y not in found:
 						found.add(y)
 						temp.append(x)
-			self.size = len(temp)
-			self.offs = (len(self.data) - self.size) // 3
-			self.view[:] = temp
+			self.fill(temp, force=True)
 		return self
 
 	uniq = unique = removedups
@@ -1304,8 +1301,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		temp = np.delete(self.view, indices)
 		self.size = len(temp)
 		if self.data is not None:
-			self.offs = (len(self.data) - self.size) // 3
-			self.view[:] = temp
+			self.fill(temp, force=True)
 		else:
 			self.reconstitute(temp, force=True)
 		if keep:
