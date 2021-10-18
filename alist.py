@@ -736,8 +736,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 				self.appendright(self.popleft(force=True), force=True)
 				steps += 1
 			return self
-		self.fill(np.roll(self.view, steps))
-		return self
+		return self.fill(np.roll(self.view, steps), force=True)
 
 	@blocking
 	def rotateleft(self, steps):
@@ -810,8 +809,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@blocking
 	def insert(self, index, value):
 		if self.data is None:
-			self.fill((value,), force=True)
-			return self
+			return self.fill((value,), force=True)
 		if index >= self.size:
 			return self.append(value, force=True)
 		elif index == 0:
@@ -835,11 +833,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@blocking
 	def insort(self, value, key=None, sort=True):
 		if self.data is None:
-			self.fill((value,), force=True)
-			return self
+			return self.fill((value,), force=True)
 		if not sort:
-			self.fill(sorted(self.add(value, force=True), key=key), force=True)
-			return self
+			return self.fill(sorted(self.add(value, force=True), key=key), force=True)
 		if key is None:
 			return self.insert(np.searchsorted(self.view, value), value, force=True)
 		v = key(value)
