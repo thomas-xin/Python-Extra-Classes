@@ -116,7 +116,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		elif fromarray and isinstance(iterable, np.ndarray):
 			self.offs = 0
 			self.size = len(iterable)
-			self.data = iterable.astype(object)
+			if iterable.dtype != "O":
+				self.data = iterable.astype(object)
+			self.data = iterable
 		else:
 			if not isinstance(iterable, (collections.abc.Sequence, collections.abc.Mapping, np.ndarray)) or type(iterable) in (str, bytes):
 				try:
