@@ -750,9 +750,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 				self.appendright(self.popleft(force=True), force=True)
 				steps += 1
 			return self
-		self.offs = (len(self.data) - self.size) // 3
-		self.view[:] = np.roll(self.view, steps)
-		return self
+		return self.fill(np.roll(self.view, steps), force=True)
 
 	@blocking
 	def rotateleft(self, steps):
@@ -825,8 +823,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@blocking
 	def insert(self, index, value):
 		if self.data is None:
-			self.fill((value,), force=True)
-			return self
+			return self.fill((value,), force=True)
 		if index >= self.size:
 			return self.append(value, force=True)
 		elif index == 0:
@@ -850,11 +847,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	@blocking
 	def insort(self, value, key=None, sort=True):
 		if self.data is None:
-			self.fill((value,), force=True)
-			return self
+			return self.fill((value,), force=True)
 		if not sort:
-			self.fill(sorted(self.add(value, force=True), key=key), force=True)
-			return self
+			return self.fill(sorted(self.add(value, force=True), key=key), force=True)
 		if key is None:
 			return self.insert(np.searchsorted(self.view, value), value, force=True)
 		v = key(value)
@@ -911,9 +906,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					if y not in found:
 						found.add(y)
 						temp.append(x)
-			self.size = len(temp)
-			self.offs = (len(self.data) - self.size) // 3
-			self.view[:] = temp
+			self.fill(temp, force=True)
 		return self
 
 	uniq = unique = removedups
@@ -1318,8 +1311,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		temp = np.delete(self.view, indices)
 		self.size = len(temp)
 		if self.data is not None:
-			self.offs = (len(self.data) - self.size) // 3
-			self.view[:] = temp
+			self.fill(temp, force=True)
 		else:
 			self.reconstitute(temp, force=True)
 		if keep:
