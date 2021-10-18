@@ -1022,8 +1022,10 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	# Appends iterable at the start of the list, reallocating when necessary.
 	@waiting
-	def extendleft(self, value):
-		value = self.to_iterable(value, force=True)[::-1]
+	def extendleft(self, value, reverse=True):
+		value = self.to_iterable(value, force=True)
+		if reverse:
+			value = value[::-1]
 		if self.data is None or not self.size:
 			self.fill(value)
 			return self
