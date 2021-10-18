@@ -130,9 +130,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		elif fromarray and isinstance(iterable, np.ndarray):
 			self.offs = 0
 			self.size = len(iterable)
-			if iterable.dtype != "O":
-				self.data = iterable.astype(object)
-			self.data = iterable
+			self.data = np.asanyarray(iterable, dtype=object)
 		else:
 			if not isinstance(iterable, (collections.abc.Sequence, collections.abc.Mapping, np.ndarray)) or type(iterable) in (str, bytes):
 				try:
@@ -700,9 +698,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if isinstance(other, self.__class__):
 			other = other.view
 		if isinstance(other, np.ndarray):
-			if other.dtype == "O":
-				return other
-			return other.astype(object)
+			return np.asanyarray(other, dtype=object)
 		x = np.empty(len(other), dtype=object)
 		x[:] = other
 		return x
