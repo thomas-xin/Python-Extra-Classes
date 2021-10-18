@@ -594,10 +594,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 					pass
 				return x
 			if type(key) is int:
-				try:
-					key = key % self.size
-				except ZeroDivisionError:
-					raise IndexError("Array List index out of range.")
+				if key > self.size:
+					try:
+						key = key % self.size
+					except ZeroDivisionError:
+						raise IndexError("Array List index out of range.")
 				return self.view.__getitem__(key)
 			return self.__class__(self.view.__getitem__(key), fromarray=True)
 		return self.__class__(self.view.__getitem__(*args), fromarray=True)
