@@ -1101,7 +1101,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			if isinstance(value, np.ndarray) or isinstance(value, self.__class__):
 				raise
 			try:
-				if len(value) == 1 or len(value) > len(self.data) and not isinstance(value, (set, dict)):
+				if len(value) == 1 or len(value) > len(self.data) or isinstance(value, (set, dict)):
 					raise
 			except TypeError:
 				pass
