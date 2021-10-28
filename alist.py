@@ -1087,7 +1087,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			if isinstance(value, np.ndarray) or isinstance(value, self.__class__):
 				raise
 			try:
-				if len(value) == 1 or len(value) > len(self.data):
+				if len(value) == 1 or len(value) > len(self.data) and not isinstance(value, (set, dict)):
 					raise
 			except TypeError:
 				pass
@@ -1191,7 +1191,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		return self
 
 	@blocking
-	def difference_update(self, *others, uniq=True):
+	def difference_update(self, *others, uniq=False):
 		pops = set()
 		for other in others:
 			if isinstance(other, collections.abc.Mapping):
@@ -1214,7 +1214,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if type(other) not in (set, frozenset):
 			other = frozenset(other)
 		data.symmetric_difference_update(other)
-		self.__init__(data)
+		self.fill(data)
 		self.frozenset = data
 		return self
 
