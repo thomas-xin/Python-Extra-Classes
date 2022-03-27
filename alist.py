@@ -1,4 +1,4 @@
-import math, numpy, itertools, collections, copy, concurrent.futures
+import math, numpy, bisect, itertools, collections, copy, concurrent.futures
 np = numpy
 from itertools import repeat
 from collections import deque
@@ -837,25 +837,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return self.fill(sorted(self.add(value, force=True), key=key), force=True)
 		if key is None:
 			return self.insert(np.searchsorted(self.view, value), value, force=True)
-		v = key(value)
-		x = self.size
-		index = (x >> 1) + self.offs
-		gap = 3 + x >> 2
-		seen = {}
-		d = self.data
-		while index not in seen and index >= self.offs and index < self.offs + self.size:
-			check = key(d[index])
-			if check < v:
-				seen[index] = True
-				index += gap
-			else:
-				seen[index] = False
-				index -= gap
-			gap = 1 + gap >> 1
-		index -= self.offs - seen.get(index, 0)
-		if index <= 0:
-			return self.appendleft(value, force=True)
-		return self.insert(index, value, force=True)
+		bisect.insort_left(a, value, key=key)
+		return self
 
 	# Removes all instances of a certain value from the list.
 	@blocking
