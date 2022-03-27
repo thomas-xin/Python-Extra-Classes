@@ -851,7 +851,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return self.fill(sorted(self.add(value, force=True), key=key), force=True)
 		if key is None:
 			return self.insert(np.searchsorted(self.view, value), value, force=True)
-		bisect.insort_left(a, value, key=key)
+		bisect.insort_left(self, value, key=key)
 		return self
 
 	# Removes all instances of a certain value from the list.
