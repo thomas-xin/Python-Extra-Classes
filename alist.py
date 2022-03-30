@@ -829,14 +829,14 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		return self
 
 	# Insertion sort using a binary search to find target position. O(n) time complexity.
-	@blocking
+	@waiting
 	def insort(self, value, key=None, sort=True):
 		if self.data is None:
-			return self.fill((value,), force=True)
+			return self.fill((value,))
 		if not sort:
-			return self.fill(sorted(self.add(value, force=True), key=key), force=True)
+			return self.fill(sorted(self.add(value, force=True), key=key))
 		if key is None:
-			return self.insert(np.searchsorted(self.view, value), value, force=True)
+			return self.insert(np.searchsorted(self.view, value), value)
 		bisect.insort_left(self, value, key=key)
 		return self
 
