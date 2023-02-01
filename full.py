@@ -1374,7 +1374,10 @@ class fdict(cdict):
 	__slots__ = ("_feed",)
 
 	def get_feed(self):
-		feed = object.__getattribute__(self, "_feed")
+		try:
+			feed = object.__getattribute__(self, "_feed")
+		except AttributeError:
+			return ()
 		if callable(feed):
 			return feed()
 		return feed
