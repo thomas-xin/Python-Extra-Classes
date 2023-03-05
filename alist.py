@@ -736,12 +736,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 				steps += 1
 			return self
 		return self.fill(np.roll(self.view, steps), force=True)
+	rotateright = rotate
 
 	@blocking
 	def rotateleft(self, steps):
 		return self.rotate(-steps, force=True)
-
-	rotateright = rotate
 
 	# Re-initializes the list if the positional offsets are too large or if the list is empty.
 	@blocking
@@ -827,6 +826,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			self.view[:index] = self.view[1:index + 1]
 		self.view[index] = value
 		return self
+	ins = insert
 
 	# Insertion sort using a binary search to find target position. O(n) time complexity.
 	@waiting
@@ -852,8 +852,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if pops:
 			self.pops(pops, force=True)
 		return self
-
-	discard = remove
+	discard = rm = remove
 
 	# Removes all duplicate values from the list.
 	@blocking
@@ -876,13 +875,13 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 						temp.append(x)
 			self.fill(temp, force=True)
 		return self
-
 	uniq = unique = removedups
 
 	# Returns first matching value in list.
 	@waiting
 	def index(self, value, key=None, sort=False):
 		return self.search(value, key, sort, force=True)[0]
+	i = index
 
 	# Returns last matching value in list.
 	@waiting
@@ -949,7 +948,6 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if not pops:
 			raise IndexError(f"{value} not found.")
 		return pops
-
 	find = findall = search
 
 	# Counts the amount of instances of the target within the list.
@@ -959,7 +957,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return np.sum(self.view == value)
 		return sum(key(i) == value for i in self)
 
-	concat = lambda self, value: self.__class__(np.concatenate([self.view, value]), dtype=object)
+	concat = cc = lambda self, value: self.__class__(np.concatenate([self.view, value]), dtype=object)
 
 	# Appends item at the start of the list, reallocating when necessary.
 	@blocking
@@ -985,9 +983,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		self.data[self.offs + self.size] = value
 		self.size += 1
 		return self
-
+	appendright = app = append
 	add = lambda self, value: object.__getattribute__(self, ("appendleft", "append")[len(self.data if self.data is not None else ()) - self.size - self.offs > self.offs])(value)
-	appendright = append
 
 	# Appends iterable at the start of the list, reallocating when necessary.
 	@waiting
@@ -1023,8 +1020,17 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return self
 		self.fill(np.append(self.view, value))
 		return self
+	extendright = ext = extend
 
-	extendright = extend
+	# Appends iterable at the selected index, reallocating.
+	@blocking
+	def extendi(self, index, value):
+		temp = self.view[:index].copy()
+		self.size = index
+		self.extend(value)
+		self.extend(temp)
+		return self
+	exti = extendi
 
 	# Similar to str.join().
 	@waiting
@@ -1253,7 +1259,6 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if x == y:
 			return y
 		return x
-
 	prod = product
 
 	# Reallocates list.
@@ -1287,7 +1292,6 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		if keep:
 			return self.__class__(temp2)
 		return self
-
 	pops = delitems
 
 hlist = alist
