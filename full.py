@@ -1283,7 +1283,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	# Removes items according to an array of indices.
 	@blocking
-	def delitems(self, iterable, keep=False):
+	def delitems(self, iterable, keep=True):
 		iterable = self.to_iterable(iterable, force=True)
 		if len(iterable) < 1:
 			if keep:
@@ -1296,13 +1296,11 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			return self
 		indices = np.asarray(iterable, dtype=np.int32)
 		if keep:
-			temp2 = self.view[indices].copy()
+			temp2 = self.view[indices]
 		temp = np.delete(self.view, indices)
-		self.size = len(temp)
-		if self.data is not None:
-			self.fill(temp, force=True)
-		else:
-			self.reconstitute(temp, force=True)
+		self.data = self.to_iterable(temp, force=True)
+		self.size = len(self.data)
+		self.offs = 0
 		if keep:
 			return self.__class__(temp2)
 		return self
