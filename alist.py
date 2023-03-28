@@ -1150,14 +1150,14 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 			other = frozenset(other)
 		return self.to_frozenset().symmetric_difference(other)
 
-	@blocking
+	@waiting
 	def update(self, *others, uniq=True):
 		for other in others:
 			if isinstance(other, collections.abc.Mapping):
 				other = other.values()
-			self.extend(other, force=True)
+			self.extend(other)
 		if uniq:
-			self.uniq(False, force=True)
+			self.uniq(False)
 		return self
 
 	@blocking
