@@ -64,12 +64,9 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 		def call(self, *args, force=False, **kwargs):
 			self.acquire(force)
 			try:
-				output = func(self, *args, **kwargs)
-			except:
+				return func(self, *args, **kwargs)
+			finally:
 				self.release()
-				raise
-			self.release()
-			return output
 		return call
 
 	# Init takes arguments and casts to a deque if possible, else generates as a single value. Allocates space equal to 3 times the length of the input iterable.
