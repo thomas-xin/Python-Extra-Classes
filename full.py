@@ -1,6 +1,6 @@
 class Dummy(BaseException):
 	__slots__ = ()
-	__bool__ = lambda: False
+	__bool__ = lambda self: False
 
 def as_str(s):
 	if type(s) in (bytes, bytearray, memoryview):
