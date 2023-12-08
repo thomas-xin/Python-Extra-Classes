@@ -763,6 +763,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def popleft(self):
+		if not self:
+			raise IndexError("Pop from empty Array List.")
 		temp = self.data[self.offs]
 		self.offs += 1
 		self.size -= 1
@@ -771,6 +773,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	@blocking
 	def popright(self):
+		if not self:
+			raise IndexError("Pop from empty Array List.")
 		temp = self.data[self.offs + self.size - 1]
 		self.size -= 1
 		self.isempty(force=True)
@@ -779,6 +783,8 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 	# Removes an item from the list. O(n) time complexity.
 	@blocking
 	def pop(self, index=None, *args):
+		if not self:
+			raise IndexError("Pop from empty Array List.")
 		try:
 			if index is None:
 				return self.popright(force=True)
