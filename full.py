@@ -1442,10 +1442,12 @@ class fdict(cdict):
 		except KeyError:
 			pass
 		try:
-			self.get_feed()
+			feed = self.get_feed()
 		except AttributeError:
+			feed = None
+		if not feed:
 			raise KeyError(k)
-		for f in self.get_feed():
+		for f in feed:
 			try:
 				return f.__getitem__(k)
 			except KeyError:
