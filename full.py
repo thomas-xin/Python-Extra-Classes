@@ -1825,7 +1825,7 @@ class mdict(cdict):
 		if v not in values:
 			values.append(v)
 
-	add = append
+	add = insert = append
 
 	def popleft(self, k):
 		values = super().__getitem__(k)
