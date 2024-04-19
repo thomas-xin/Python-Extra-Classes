@@ -18,11 +18,6 @@ from itertools import repeat
 from collections import deque
 
 
-# Creates a nested tuple from a nested list.
-_nested_tuple = lambda a: tuple(_nested_tuple(i) if isinstance(i, collections.abc.MutableSequence) else i for i in a)
-nested_tuple = lambda a: _nested_tuple(a) if isinstance(a, collections.abc.Sequence) and type(a) not in (str, bytes) and a[0] != a else a
-
-
 # Uses an optional interpolation mode to get a certain position in an iterable.
 def get(v, i, mode=1):
 	size = len(v)
