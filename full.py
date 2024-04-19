@@ -16,6 +16,7 @@ import math, numpy, bisect, itertools, collections, copy, concurrent.futures
 np = numpy
 from itertools import repeat
 from collections import deque
+from contextlib import suppress
 
 
 # Uses an optional interpolation mode to get a certain position in an iterable.
