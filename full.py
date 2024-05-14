@@ -2,9 +2,11 @@ class Dummy(BaseException):
 	__slots__ = ()
 	__bool__ = lambda self: False
 
-def as_str(s):
-	if type(s) in (bytes, bytearray, memoryview):
-		return bytes(s).decode("utf-8", "replace")
+def as_str(s, encoding="utf-8"):
+	if callable(getattr(s, "tobytes", None)):
+		s = s.tobytes()
+	if isinstance(s, (bytes, bytearray)):
+		return s.decode(encoding, "replace")
 	return str(s)
 
 
