@@ -1374,7 +1374,7 @@ class fdict(cdict):
 
 	"""A dict with key-value pairs fed from more dict-like objects."""
 
-	__slots__ = ("__weakref__", "_feed")
+	__slots__ = ("_feed",)
 
 	def get_feed(self):
 		feed = object.__getattribute__(self, "_feed")
@@ -1758,7 +1758,7 @@ class fcdict(cdict):
 
 	"""A full-casefold string lookup mapping object."""
 
-	__slots__ = ("__weakref__",)
+	__slots__ = ()
 
 	__init__ = lambda self, *args, **kwargs: super().__init__((full_prune(k), v) for k, v in dict(*args, **kwargs).items())
 	__contains__ = lambda self, k: super().__contains__(k) or super().__contains__(full_prune(k))
@@ -1807,7 +1807,7 @@ class mdict(cdict):
 
 	"""Dictionary with multiple assignable values per key."""
 
-	__slots__ = ("__weakref__",)
+	__slots__ = ()
 
 	count = lambda self: sum(len(v) for v in super().values())
 
@@ -1858,7 +1858,7 @@ class msdict(cdict):
 
 	"""Dictionary with multiple assignable values per key. Uses sets."""
 
-	__slots__ = ("__weakref__",)
+	__slots__ = ()
 
 	count = lambda self: sum(len(v) for v in super().values())
 
