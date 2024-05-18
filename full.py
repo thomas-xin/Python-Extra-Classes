@@ -1,5 +1,5 @@
 class Dummy(BaseException):
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 	__bool__ = lambda self: False
 
 def as_str(s, encoding="utf-8"):
@@ -42,7 +42,7 @@ class alist(collections.abc.MutableSequence, collections.abc.Callable):
 
 	maxoff = (1 << 24) - 1
 	minsize = 9
-	__slots__ = ("hash", "block", "offs", "size", "data", "frozenset", "queries", "_index")
+	__slots__ = ("__weakref__", "hash", "block", "offs", "size", "data", "frozenset", "queries", "_index")
 
 	# For thread-safety: Waits until the list is not busy performing an operation.
 	def waiting(self):
@@ -1318,7 +1318,7 @@ class cdict(dict):
 	
 	"""Class-based dictionary, with attributes corresponding to keys."""
 
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 
 	@classmethod
 	def from_object(cls, obj):
@@ -1374,7 +1374,7 @@ class fdict(cdict):
 
 	"""A dict with key-value pairs fed from more dict-like objects."""
 
-	__slots__ = ("_feed",)
+	__slots__ = ("__weakref__", "_feed")
 
 	def get_feed(self):
 		feed = object.__getattribute__(self, "_feed")
@@ -1491,7 +1491,7 @@ class demap(collections.abc.Mapping):
 	
 	"""Double ended mapping, indexable from both sides."""
 
-	__slots__ = ("a", "b")
+	__slots__ = ("__weakref__", "a", "b")
 
 	def __init__(self, *args, **kwargs):
 		self.a = cdict(*args, **kwargs)
@@ -1562,7 +1562,7 @@ class UniversalSet(collections.abc.Set):
 	
 	"""The Universal Set. Contains everything."""
 
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 
 	__str__ = lambda self: "ξ"
 	__repr__ = lambda self: f"{self.__class__.__name__}()"
@@ -1758,7 +1758,7 @@ class fcdict(cdict):
 
 	"""A full-casefold string lookup mapping object."""
 
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 
 	__init__ = lambda self, *args, **kwargs: super().__init__((full_prune(k), v) for k, v in dict(*args, **kwargs).items())
 	__contains__ = lambda self, k: super().__contains__(k) or super().__contains__(full_prune(k))
@@ -1807,7 +1807,7 @@ class mdict(cdict):
 
 	"""Dictionary with multiple assignable values per key."""
 
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 
 	count = lambda self: sum(len(v) for v in super().values())
 
@@ -1858,7 +1858,7 @@ class msdict(cdict):
 
 	"""Dictionary with multiple assignable values per key. Uses sets."""
 
-	__slots__ = ()
+	__slots__ = ("__weakref__",)
 
 	count = lambda self: sum(len(v) for v in super().values())
 
